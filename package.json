@@ -8,8 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nikolaimueller/my_wc.git",
-	"url_old": "http://localhost:8081/git/nikim/my-wc.git"
+    "url": "https://github.com/nikolaimueller/my_wc.git"
   },
   "keywords": [
     "web-component",
