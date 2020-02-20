@@ -1,0 +1,5 @@
+:host {
+    display: block;
+    border: 1px solid red; /* Drop this line if you don't like red boxes ;-) */
+    padding: 10px;
+}
