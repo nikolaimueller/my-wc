@@ -11,9 +11,7 @@ export default class RouteView extends HTMLElement {
 
         let styleLink = document.createElement('link');
         styleLink.setAttribute('rel', 'stylesheet');
-        // styleLink.setAttribute('href', 'tools/routing/route-view.css');
-        styleLink.setAttribute('href', '/node_modules/my-wc/components/routing/route-view.css'); // BUGFIX: use absolute path from node_modules downward.
-        // console.dir(styleLink); // <link rel="stylesheet" href="components/main-app/main-nav/nav-item.css">
+        styleLink.setAttribute('href', '/node_modules/my-wc/components/routing/route-view.css');
         shadow.appendChild(styleLink);
 
         let currentRoute = getCurrentRoute();
@@ -32,7 +30,6 @@ export default class RouteView extends HTMLElement {
             newRoute = getCurrentRoute();
         }
         if (!newRoute) {
-            // throw new Error(RouteView.tag+'.handleSwitchRoute: Empty newRoute.')
             console.warn(RouteView.tag+'.handleSwitchRoute: Empty newRoute.');
             return null;
         }
@@ -41,7 +38,7 @@ export default class RouteView extends HTMLElement {
             this.shadowRoot.removeChild(this.refRoutingView);
             this.refRoutingView = document.createElement(newRoute.component.tag);
             
-            // $$$ Theme
+            // $$$ TODO: Handle Themes.
             this.refRoutingView.setAttribute('theme', 'theme');
 
             this.shadowRoot.appendChild(this.refRoutingView);

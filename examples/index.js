@@ -10,7 +10,7 @@ register({ default: true, url: '/home', component: HomeView });
 register({ url: '/about', component: AboutView });
 
 
-// *** MAIN ***
+// *** MAIN APP ***
 import MainApp from './components/MainApp/MainApp.js';
 
 let mainApp = document.createElement(MainApp.tag);

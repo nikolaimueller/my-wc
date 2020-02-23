@@ -4,9 +4,13 @@
 
 *You may find my Visual Studio Code snippets for webcomponents [vscode-wc-snippets](https://github.com/nikolaimueller/vscode-wc-snippets) even more helpful ;-)*
 
-This are my native HTML5 web components / custom elements (v1).
+These are my native HTML5 web components / custom elements (v1). This is a  frontend package, meant to run in the browser only!  
 
-## Install
+The idea here is to avoid bundling - HTTP/2 can deliver many small files faster than HTTP/1 can deliver some rare big files.  
+Browsers which support native web components also support HTTP/2.  
+Further more modern browsers support native javascript modules.
+
+## Installation
 
 *As usual, you will need [Node.js](https://nodejs.org) with [npm](https://www.npmjs.com/) to be installed, before you can install ``my-wc`` into your project. As ``my-wc`` is a pure client (browser) moule/package the Node.js version doesn't matter much.*
 
@@ -36,10 +40,12 @@ The ideas behind the routing components are this:
 > You need a webserver to run the example, or an IDE like Visual Studio Code and an extension like [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer).  
 In any case the document-root is the ``/examples`` subfolder and the main ducument is ``index.html``.
 
-* The ``index.html`` is tiny: It has an empty \<body\> tag and includes the ``index.js`` file, which is the "MAIN" of the example page. And links some 
-CSS file.
+* The tiny ``index.html`` has an empty \<body\> and includes the ``index.js`` as a native javascript module, which acts as the __main__ entry-point of the example app.
+```javascript
+<script type="module" src="index.js"></script>
+```
 
-* The ``index.js`` defines and registers the route definitions.
+* The ``index.js`` defines and registers the route definitions - the module import url for my-wc starts as "``node_modules/my-wc/components/``".
 ```javascript
 import { register } from 'node_modules/my-wc/components/routing/routing.js';
 import HomeView from './views/HomeView.js';
@@ -50,8 +56,8 @@ register({ url: '/about', component: AboutView });
 
 * The ``components/MainApp/MainApp.js`` builds a menu by using some ``route-link`` componnt. In addition it provides the ``route-view`` placeholder for displaying the views.
 ```javascript
-import RouteView from '../../../components/routing/route-view.js';
-import RouteLink from '../../../components/routing/route-link.js';
+import RouteView from 'node_modules/my-wc/components/routing/route-view.js';
+import RouteLink from 'node_modules/my-wc/components/routing/route-link.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -63,7 +69,7 @@ template.innerHTML = `
     <${RouteView.tag}></${RouteView.tag}>
 </div>
 `;
-// The custom element/web component implementation comes here...
+// The MainApp (<main-app>) implementation comes here...
 ```
 
 

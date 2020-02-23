@@ -19,14 +19,10 @@ export default class RouteLink extends HTMLElement {
     }
 
     onClickHandler(e) {
-        // console.dir(e);
-        // console.dir(this);
-
         switchRoute(this.url);
     }
     
 	attributeChangedCallback(name, oldValue, newValue) {
-		// console.log(RouteLink.tag + '.attributeChangedCallback');
 		switch (name) {
 		  case 'title':
             this.refSpan.textContent = newValue;

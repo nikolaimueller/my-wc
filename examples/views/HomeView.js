@@ -1,7 +1,7 @@
 const template = document.createElement('template');
 template.innerHTML = `
 <h1>Home-View</h1>
-<p>Template comes here.</p>
+<p>Template content comes here.</p>
 `;
 
 export default class HomeView extends HTMLElement {
@@ -13,7 +13,7 @@ export default class HomeView extends HTMLElement {
 
         let shadow = this.attachShadow({mode:'open'});
 
-        // Add Component StyleSheet-Link
+        // Add component's StyleSheet-Link
         this.refLinkStyle = document.createElement('link');
         this.refLinkStyle.setAttribute('rel', 'stylesheet');
         this.refLinkStyle.setAttribute('href', HomeView.STYLESHEET_LINK);
