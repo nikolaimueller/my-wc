@@ -1,6 +1,6 @@
 {
   "name": "my-wc",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Native HTML5 web-components",
   "main": "index.js",
   "scripts": {
@@ -13,9 +13,9 @@
   "keywords": [
     "web-component",
     "webcomponent",
-	"custom element",
-	"HTML5",
-	"shadowDOM"
+    "custom element",
+    "HTML5",
+    "shadowDOM"
   ],
   "author": "nikolai@nikim.de",
   "license": "ISC"
