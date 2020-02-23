@@ -1,18 +1,18 @@
 # my-wc
 
-*__WARNING: This is in a very early stage of development!__*
+*__HINT: This is in a very early stage of development!__*
 
 *You may find my Visual Studio Code snippets for webcomponents [vscode-wc-snippets](https://github.com/nikolaimueller/vscode-wc-snippets) even more helpful ;-)*
 
-My native HTML5 web components / custom elements (v1).
-
+This are my native HTML5 web components / custom elements (v1).
 
 ## Install
 
-You will need [Node.js](https://nodejs.org) with [npm](https://www.npmjs.com/) to install ``my_wc`` into your project.
+*As usual, you will need [Node.js](https://nodejs.org) with [npm](https://www.npmjs.com/) to be installed, before you can install ``my-wc`` into your project. As ``my-wc`` is a pure client (browser) moule/package the Node.js version doesn't matter much.*
 
-As ``my_wc`` is not a ``npm`` package, installation has to bee done via git url, like so:  
-``npm install git+https://github.com/nikolaimueller/my_wc.git --save``
+Open your favorite shell, navigate into your project folder and run:  
+``npm install my-wc --save``
+
 
 ## Component List:
 
@@ -41,7 +41,7 @@ CSS file.
 
 * The ``index.js`` defines and registers the route definitions.
 ```javascript
-import { register } from 'node_modules/my_wc/components/routing/routing.js';
+import { register } from 'node_modules/my-wc/components/routing/routing.js';
 import HomeView from './views/HomeView.js';
 import AboutView from './views/AboutView.js';
 register({ default: true, url: '/home', component: HomeView });
