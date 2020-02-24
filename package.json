@@ -4,7 +4,12 @@
   "description": "Native HTML5 web-components",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf ./examples/vendor",
+    "prebuild": "npm run clean -s",
+    "build": "npm run build-1 -s  &  npm run build-2 -s",
+    "build-1": "node_modules/.bin/mkdirp ./examples/vendor/my-wc/components",
+    "build-2": "node_modules/.bin/ncp ./components ./examples/vendor/my-wc/components"
   },
   "repository": {
     "type": "git",
@@ -18,5 +23,10 @@
     "shadowDOM"
   ],
   "author": "nikolai@nikim.de",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "mkdirp": "^1.0.3",
+    "ncp": "^2.0.0",
+    "rimraf": "^3.0.2"
+  }
 }

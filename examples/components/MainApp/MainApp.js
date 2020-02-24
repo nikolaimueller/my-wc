@@ -1,5 +1,5 @@
-import RouteView from '../../../components/routing/route-view.js'; // Hint: Import url can't start as "node_modules/my-wc/" in this examples folder!
-import RouteLink from '../../../components/routing/route-link.js'; //       But in your app "node_modules/my-wc/" url's will work fine.
+import RouteView from '/examples/vendor/my-wc/components/routing/route-view.js';
+import RouteLink from '/examples/vendor/my-wc/components/routing/route-link.js';
 
 const template = document.createElement('template');
 template.innerHTML = `

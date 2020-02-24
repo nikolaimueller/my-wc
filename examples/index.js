@@ -1,5 +1,5 @@
 // *** Setup routing ***
-import { register } from '../components/routing/routing.js';
+import { register } from '/examples/vendor/my-wc/components/routing/routing.js';
 
 // Import "view" components.
 import HomeView from './views/HomeView.js';
