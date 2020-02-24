@@ -5,7 +5,7 @@ __index:__
 * [my-wc](#my-wc)
     + [Installation](#Installation)
     + [Components](#Components)
-    + [Routing Components](#Routing%20Components)
+    + [Routing Components](#Routing Components)
 * [Examples](#Examples)
     + [Prerequisites](#Prerequisites)
     + [Build the example](#Build%20the%20example)
