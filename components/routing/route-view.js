@@ -2,6 +2,11 @@ import { getCurrentRoute, registerTarget, lookupRouteByUrl } from './routing.js'
 
 export default class RouteView extends HTMLElement {
     static get tag() { return 'route-view'; }
+    static get styleSheet_url() {
+        // Replace module url's ".js" extension with ".css"
+        // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
+        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css';
+    }
     constructor() {
         super();
 
@@ -10,8 +15,8 @@ export default class RouteView extends HTMLElement {
         let shadow = this.attachShadow({ mode: 'open' });
 
         let styleLink = document.createElement('link');
-        styleLink.setAttribute('rel', 'stylesheet');
-        styleLink.setAttribute('href', '/node_modules/my-wc/components/routing/route-view.css');
+        styleLink.setAttribute('rel', 'stylesheet');        
+        styleLink.setAttribute('href', RouteView.styleSheet_url); // '.../my-wc/components/routing/route-view.css'
         shadow.appendChild(styleLink);
 
         let currentRoute = getCurrentRoute();
