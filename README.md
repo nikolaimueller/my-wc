@@ -5,11 +5,11 @@ __index:__
 * [my-wc](#my-wc)
     + [Installation](#Installation)
     + [Components](#Components)
-    + [Routing Components](#Routing%20Components)
+    + [Routing Components](#Routing-Components)
 * [Examples](#Examples)
     + [Prerequisites](#Prerequisites)
-    + [Build the example](#Build%20the%20example)
-    + [How routing works in the example](#How%20routing%20works%20in%20the%20example)
+    + [Build the example](#Build-the-example)
+    + [How routing works in the example](#How-routing-works-in-the-example)
 
 
 *__HINT: This is in a very early stage of development!__*
