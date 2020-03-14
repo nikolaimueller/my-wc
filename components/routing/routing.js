@@ -1,10 +1,14 @@
+// Routing core module.
 
-let registry = [];
-let viewTarget = null;
+let registry = []
+let viewTarget = null
 
-let currentRoute = null;
+let currentRoute = null
+let defaultRoute = null
 
-export function getCurrentRoute() { return currentRoute; }
+export function getCurrentRoute() { return currentRoute }
+export function setCurrentRoute(route) { currentRoute = route }
+export function getDefaultRoute() { return defaultRoute }
 
 export function routes() {
     return JSON.parse(JSON.stringify(registry)); // return cloned registry;
@@ -12,51 +16,84 @@ export function routes() {
 
 export function lookupRouteByUrl(url) {
     if (!url) {
-        throw new Error('Routing.lookupRouteByUrl: Param url missing.');
+        if (defaultRoute !== null) {
+            return defaultRoute
+        } else {
+            throw new Error('Routing.lookupRouteByUrl: both url and defaultRoute musst not be null!')
+        }
     }
-    let matchRoute = registry.find(route => route.url === url.toLowerCase());
-    return matchRoute;
+    let matchRoute = registry.find(route => route.url === url.toLowerCase())
+    return matchRoute
 }
 
 export function register(route) {
-    // validate route
+    // Validate route.
     if (!route) {
         throw new Error('Routing: Param route missing');
     }
     if (!route.url) {
-        throw new Error('Routing: Invalid route, url missing.');
+        throw new Error('Routing: Invalid route, url missing.')
     }
     if (registry.find((r) => r.url == route.url.toLowerCase())) {
-        throw new Error(`Routing: route '${r.url}' already registered.`);
+        throw new Error(`Routing: route '${r.url}' already registered.`)
     }
 
-    // insert route
-    registry.push(route);
+    // Insert route registry.
+    registry.push(route)
 
-    // default route
+    // Store default route if given.
     if (route.default && route.default === true) {
-        if (currentRoute === null) {
-            currentRoute = route;
+        if (defaultRoute === null) {
+            defaultRoute = route
         }
     }
 }
 
 export function switchRoute(newUrl) {
     if (!newUrl) {
-        throw new Error('Routing.switchView: Param newUrl missing.');
+        throw new Error('Routing.switchView: Param newUrl missing.')
     }
     if (viewTarget === null) {
-        throw new Error('Routing.switchView: viewTarget is null.');
+        throw new Error('Routing.switchView: viewTarget is null.')
     }
-    currentRoute = viewTarget.handleSwitchRoute(currentRoute, newUrl);
+    currentRoute = viewTarget.handleSwitchRoute(currentRoute, defaultRoute, newUrl)
 }
 
 export function registerTarget(target) {
     if (!target) {
-        throw new Error('Routing.registerTarget: Missing param target.');
+        throw new Error('Routing.registerTarget: Missing param target.')
     }
     if (viewTarget !== null) {
-        throw new Error('Routing.registerTarget: viewTarget already set.');
+        throw new Error('Routing.registerTarget: viewTarget already set.')
     }
-    viewTarget = target;
+    viewTarget = target
+}
+
+
+// *** Handle interception callbacks
+let beforeRouteCBs = []
+let afterRouteCBs = []
+
+export function registerBeforeGlobalRoute(callback) {
+    // console.log(`Routing.registerBeforeGlobalRoutes`)
+    beforeRouteCBs.push(callback)
+}
+
+export function registerAfterGlobalRoute(callback) {
+    // console.log(`Routing.registerAfterGlobalRoutes`)
+    afterRouteCBs.push(callback)
+}
+
+export function interceptBefore(oldUrl, oldView, newUrl) {
+    let result = null
+    beforeRouteCBs.forEach((cb) => {
+        result = cb(oldUrl, oldView, newUrl)
+    })
+    // console.log(`Routing.interceptBefore: returning: ${result}`)
+    return result
+}
+
+export function interceptAfter(oldUrl, newUrl, newView) {
+    console.log(`Routing.interceptAfter: !! NOT IMPLEMENTED !!`);
+    // $$$ TODO: IMPLEMENT ME !!!
 }

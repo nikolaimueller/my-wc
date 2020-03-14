@@ -1,0 +1,18 @@
+/* *** CSS pseudo-classes *** */
+:host {
+    /* Selects the shadow host of the shadow DOM containing the CSS it is used inside. */
+    display: block;
+    border: 2px dashed orangered; /* Drop this line if you don't like green boxes ;-) */
+    padding: 2em;
+}
+
+p {
+    color: darkblue
+}
+
+button {
+    padding: 4px 40px 4px 40px;
+    font-size: 120%;
+    font-weight: bolder;
+    border-radius: 12px;
+}

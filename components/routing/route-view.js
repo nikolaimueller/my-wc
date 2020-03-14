@@ -1,55 +1,86 @@
-import { getCurrentRoute, registerTarget, lookupRouteByUrl } from './routing.js';
+// Component: RouteView
+import {
+    getCurrentRoute, setCurrentRoute,
+    getDefaultRoute,
+    registerTarget,
+    lookupRouteByUrl,
+    interceptBefore,
+    interceptAfter
+} from './routing.js'
 
 export default class RouteView extends HTMLElement {
-    static get tag() { return 'route-view'; }
+    static get tag() { return 'route-view' }
     static get styleSheet_url() {
         // Replace module url's ".js" extension with ".css"
         // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
-        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css';
+        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
     }
     constructor() {
-        super();
+        super()
 
-        registerTarget(this);
+        registerTarget(this)
 
-        let shadow = this.attachShadow({ mode: 'open' });
+        let shadow = this.attachShadow({ mode: 'open' })
 
-        let styleLink = document.createElement('link');
-        styleLink.setAttribute('rel', 'stylesheet');        
-        styleLink.setAttribute('href', RouteView.styleSheet_url); // '.../my-wc/components/routing/route-view.css'
-        shadow.appendChild(styleLink);
-
-        let currentRoute = getCurrentRoute();
-        if (currentRoute !== null && currentRoute.component) {
-            this.refRoutingView = document.createElement(currentRoute.component.tag);
-        } else {
-            this.refRoutingView = document.createElement('div');
-            this.refRoutingView.textContent = '((empty currentView))';
-        }
-        shadow.appendChild(this.refRoutingView);
+        let styleLink = document.createElement('link')
+        styleLink.setAttribute('rel', 'stylesheet')
+        styleLink.setAttribute('href', RouteView.styleSheet_url)
+        shadow.appendChild(styleLink)
     }
 
-    handleSwitchRoute(currentRoute, newUrl) {
-        let newRoute = lookupRouteByUrl(newUrl);
+    connectedCallback() {
+        // Invoked each time the custom element is appended into a document-connected element.
+        if (this.isConnected) {
+            let currentRoute = getCurrentRoute()
+            let defaultRoute = getDefaultRoute()
+            this.handleSwitchRoute(null, defaultRoute, currentRoute?.url)
+        }
+    }
+
+    handleSwitchRoute(currentRoute, defaultRoute, newUrl) {
+        // console.log(`${RouteView.tag}.handleSwitchRoute-0: defaultRoute?.url: '${defaultRoute?.url}' -- newUrl: '${newUrl}' -- currentRoute?.tag: <${defaultRoute?.tag}>`)
+
+        let newRoute = lookupRouteByUrl(newUrl)
         if (!newRoute) {
-            newRoute = getCurrentRoute();
+            newRoute = getCurrentRoute()
         }
         if (!newRoute) {
-            console.warn(RouteView.tag+'.handleSwitchRoute: Empty newRoute.');
-            return null;
+            console.warn(RouteView.tag+'.handleSwitchRoute: Empty newRoute.')
+            return null
         }
+        
+        // Handle interception before routing
+        let redirectUrl
+        redirectUrl = interceptBefore(currentRoute?.url, currentRoute?.component, newRoute.url)
+        if (typeof redirectUrl === 'string' && redirectUrl.length > 0) {
+            newRoute = lookupRouteByUrl(redirectUrl)
+        }
+
+        // Switch the displayed component
         if (!currentRoute || newRoute.url !== currentRoute.url) {
-            // Fire switch
-            this.shadowRoot.removeChild(this.refRoutingView);
-            this.refRoutingView = document.createElement(newRoute.component.tag);
+            // ..Remove old routeView content node (child).
+            if (this.refRoutingView) {
+                this.shadowRoot.removeChild(this.refRoutingView)
+            }
+            // ...Append new created content node ti routeView.
+            this.refRoutingView = document.createElement(newRoute.component.tag)
             
             // $$$ TODO: Handle Themes.
-            this.refRoutingView.setAttribute('theme', 'theme');
+            this.refRoutingView.setAttribute('theme', 'theme')
 
-            this.shadowRoot.appendChild(this.refRoutingView);
-            return newRoute;
+            this.shadowRoot.appendChild(this.refRoutingView)
+
+            let stateObj = null
+            history.replaceState(stateObj, `route: ${newRoute.url}`, `#${newRoute.url}`)
+
+            console.warn(RouteView.tag+'.handleSwitchRoute: handle intercetion after routing.')
+            // $$$ TODO: Handle interception after routing
+            // $$$
+
+            return newRoute
         }
-        return null;
+        return null
     }
 }
-customElements.define(RouteView.tag, RouteView);
+// Register custom element.
+customElements.define(RouteView.tag, RouteView)
