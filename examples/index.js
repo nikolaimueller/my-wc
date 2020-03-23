@@ -24,7 +24,7 @@ register({ url: '/about', component: AboutView })
 register({ url: '/login', component: LoginView })
 
 registerBeforeGlobalRoute((oldUrl, oldView, newUrl) => {
-    console.log(`custom "beforeGlobalRoute" interceptor:   fromUrl: '${oldUrl}' -- newUlr: '${newUrl}' -- oldView.tag: <${oldView?.tag}>`)
+    // console.log(`custom "beforeGlobalRoute" interceptor:   oldUrl: '${oldUrl}' -- newUlr: '${newUrl}' -- oldView.tag: <${oldView?.tag}>`)
     // Return routing-url {string} to redirect to url.
     // Return null or undefined to proceed normal routing.
     if (currentUser.accessToken === null) {
@@ -34,7 +34,7 @@ registerBeforeGlobalRoute((oldUrl, oldView, newUrl) => {
     return null
 })
 registerAfterGlobalRoute((oldUrl, newUrl, newView)  => {
-    console.log(`custom "afterGlobalRoute" interceptor: fromUrl: ${oldUrl} -- toUrl:${newUrl} -- newView: `)
+    // console.log(`custom "afterGlobalRoute" interceptor: oldUrl: ${oldUrl} -- toUrl:${newUrl} -- newView: `)
     // Return routing-url {string} to redirect to url.
     // Return null or undefined to proceed normal routing.
     return null

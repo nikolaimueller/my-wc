@@ -49,7 +49,7 @@ export default class LoginView extends HTMLElement {
 
     connectedCallback() {
         // Invoked each time the custom element is appended into a document-connected element.
-        console.log(`${LoginView.tag}.connectedCallback()`)
+        // console.log(`${LoginView.tag}.connectedCallback()`)
         if (this.isConnected) {
             // Add click-button event handler
             let refButton = this.shadowRoot.getElementById(ID_LOGIN_BUTTON)
@@ -59,7 +59,7 @@ export default class LoginView extends HTMLElement {
 
     disconnectedCallback() {
         // Invoked each time the custom element is disconnected from the document's DOM.
-        console.log(`${LoginView.tag}.disconnectedCallback()`)
+        // console.log(`${LoginView.tag}.disconnectedCallback()`)
         // Remove click-button event handler
         let refButton = this.shadowRoot.getElementById(ID_LOGIN_BUTTON)
         refButton.removeEventListener('click', this.onClickButton)

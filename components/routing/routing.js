@@ -51,12 +51,23 @@ export function register(route) {
 
 export function switchRoute(newUrl) {
     if (!newUrl) {
-        throw new Error('Routing.switchView: Param newUrl missing.')
+        throw new Error('Routing.switchRoute: Param newUrl missing.')
     }
     if (viewTarget === null) {
-        throw new Error('Routing.switchView: viewTarget is null.')
+        throw new Error('Routing.switchRoute: viewTarget is null.')
     }
-    currentRoute = viewTarget.handleSwitchRoute(currentRoute, defaultRoute, newUrl)
+
+    // Handle interception before routing
+    let interceptUrl = interceptBefore(currentRoute?.url, currentRoute?.component, newUrl)
+    if (typeof interceptUrl === 'string' && interceptUrl.length > 0) {
+        newUrl = interceptUrl
+    }
+
+    currentRoute = viewTarget.switchContent(currentRoute, newUrl)
+
+    console.warn('Routing.switchRoute: handle interception after routing. NOT IMPLEMENTED !!')
+    // $$$ TODO: Handle interception after routing
+    // $$$
 }
 
 export function registerTarget(target) {
@@ -94,6 +105,6 @@ export function interceptBefore(oldUrl, oldView, newUrl) {
 }
 
 export function interceptAfter(oldUrl, newUrl, newView) {
-    console.log(`Routing.interceptAfter: !! NOT IMPLEMENTED !!`);
+    // console.log(`Routing.interceptAfter: !! NOT IMPLEMENTED !!`);
     // $$$ TODO: IMPLEMENT ME !!!
 }

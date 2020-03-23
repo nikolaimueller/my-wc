@@ -5,7 +5,8 @@ import {
     registerTarget,
     lookupRouteByUrl,
     interceptBefore,
-    interceptAfter
+    interceptAfter,
+    switchRoute
 } from './routing.js'
 
 export default class RouteView extends HTMLElement {
@@ -31,29 +32,30 @@ export default class RouteView extends HTMLElement {
     connectedCallback() {
         // Invoked each time the custom element is appended into a document-connected element.
         if (this.isConnected) {
+            // Initial switch-route
             let currentRoute = getCurrentRoute()
             let defaultRoute = getDefaultRoute()
-            this.handleSwitchRoute(null, defaultRoute, currentRoute?.url)
+            let newUrl = null;
+            if (defaultRoute !== null) {
+                newUrl = defaultRoute.url
+            }
+            if (currentRoute !== null) {
+                newUrl = currentRoute.url
+            }
+            switchRoute(newUrl)
         }
     }
 
-    handleSwitchRoute(currentRoute, defaultRoute, newUrl) {
-        // console.log(`${RouteView.tag}.handleSwitchRoute-0: defaultRoute?.url: '${defaultRoute?.url}' -- newUrl: '${newUrl}' -- currentRoute?.tag: <${defaultRoute?.tag}>`)
+    switchContent(currentRoute, newUrl) {
+        // console.log(`${RouteView.tag}.switchContent-0: defaultRoute?.url: '${defaultRoute?.url}' -- newUrl: '${newUrl}' -- currentRoute?.tag: <${defaultRoute?.tag}>`)
 
         let newRoute = lookupRouteByUrl(newUrl)
         if (!newRoute) {
             newRoute = getCurrentRoute()
         }
         if (!newRoute) {
-            console.warn(RouteView.tag+'.handleSwitchRoute: Empty newRoute.')
+            console.warn(RouteView.tag+'.switchContent: Empty newRoute.')
             return null
-        }
-        
-        // Handle interception before routing
-        let redirectUrl
-        redirectUrl = interceptBefore(currentRoute?.url, currentRoute?.component, newRoute.url)
-        if (typeof redirectUrl === 'string' && redirectUrl.length > 0) {
-            newRoute = lookupRouteByUrl(redirectUrl)
         }
 
         // Switch the displayed component
@@ -62,7 +64,7 @@ export default class RouteView extends HTMLElement {
             if (this.refRoutingView) {
                 this.shadowRoot.removeChild(this.refRoutingView)
             }
-            // ...Append new created content node ti routeView.
+            // ...append new created content node to routeView.
             this.refRoutingView = document.createElement(newRoute.component.tag)
             
             // $$$ TODO: Handle Themes.
@@ -70,12 +72,9 @@ export default class RouteView extends HTMLElement {
 
             this.shadowRoot.appendChild(this.refRoutingView)
 
+            // Reflect current route into history state
             let stateObj = null
             history.replaceState(stateObj, `route: ${newRoute.url}`, `#${newRoute.url}`)
-
-            console.warn(RouteView.tag+'.handleSwitchRoute: handle intercetion after routing.')
-            // $$$ TODO: Handle interception after routing
-            // $$$
 
             return newRoute
         }
