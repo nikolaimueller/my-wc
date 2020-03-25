@@ -23,21 +23,25 @@ register({ default: true, url: '/home', component: HomeView })
 register({ url: '/about', component: AboutView })
 register({ url: '/login', component: LoginView })
 
+// Add a intercept-routing callback - before switching route.
+// Switching can be redirected by returning a registered routing url.
 registerBeforeGlobalRoute((oldUrl, oldView, newUrl) => {
-    // console.log(`custom "beforeGlobalRoute" interceptor:   oldUrl: '${oldUrl}' -- newUlr: '${newUrl}' -- oldView.tag: <${oldView?.tag}>`)
     // Return routing-url {string} to redirect to url.
     // Return null or undefined to proceed normal routing.
     if (currentUser.accessToken === null) {
         // User not logged in -- redirect him to the login page
+        console.log(`Custom "beforeGlobalRoute" interceptor: -- oldUrl: '${oldUrl}' -- newUlr: '${newUrl}' -- oldView:`, oldView)
         return '/login'
     }
     return null
 })
+
+// Add a intercept-routing callback - after route has been switched.
+// Switching cannot be "undone" i.e redirected to another route
 registerAfterGlobalRoute((oldUrl, newUrl, newView)  => {
-    // console.log(`custom "afterGlobalRoute" interceptor: oldUrl: ${oldUrl} -- toUrl:${newUrl} -- newView: `)
-    // Return routing-url {string} to redirect to url.
-    // Return null or undefined to proceed normal routing.
-    return null
+    if (true === true) { // dummy condition
+        console.log(`Custom "afterGlobalRoute" interceptor: -- oldUrl: '${oldUrl}' -- newUrl: '${newUrl}' -- newView:`, newView)
+    }
 })
 
 // *** MAIN APP ***
@@ -47,7 +51,7 @@ function onUserLoggedIn(event) {
     currentUser.account = event.detail.account
     currentUser.accessToken = event.detail.accessToken
     currentUser.displayName = event.detail.displayName
-
+    // Programmatically switch route
     switchRoute('/home')
 }
 

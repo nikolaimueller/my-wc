@@ -56,6 +56,8 @@ export function switchRoute(newUrl) {
     if (viewTarget === null) {
         throw new Error('Routing.switchRoute: viewTarget is null.')
     }
+    
+    let oldUrl = currentRoute?.url
 
     // Handle interception before routing
     let interceptUrl = interceptBefore(currentRoute?.url, currentRoute?.component, newUrl)
@@ -63,11 +65,11 @@ export function switchRoute(newUrl) {
         newUrl = interceptUrl
     }
 
+    // Switch displayed content 
     currentRoute = viewTarget.switchContent(currentRoute, newUrl)
 
-    console.warn('Routing.switchRoute: handle interception after routing. NOT IMPLEMENTED !!')
-    // $$$ TODO: Handle interception after routing
-    // $$$
+    // Handle interception after routing
+    interceptAfter(oldUrl, newUrl, currentRoute?.component /* oldUrl, newUrl, newView */)
 }
 
 export function registerTarget(target) {
@@ -100,11 +102,11 @@ export function interceptBefore(oldUrl, oldView, newUrl) {
     beforeRouteCBs.forEach((cb) => {
         result = cb(oldUrl, oldView, newUrl)
     })
-    // console.log(`Routing.interceptBefore: returning: ${result}`)
     return result
 }
 
 export function interceptAfter(oldUrl, newUrl, newView) {
-    // console.log(`Routing.interceptAfter: !! NOT IMPLEMENTED !!`);
-    // $$$ TODO: IMPLEMENT ME !!!
+    afterRouteCBs.forEach((cb) => {
+        cb(oldUrl, newUrl, newView)
+    })
 }
