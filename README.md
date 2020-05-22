@@ -37,8 +37,8 @@ Open your favorite shell, navigate into your project folder and run:
 ## Components
 
 * Routing:
-    + route-link ``components/routing/route-links.*`` - switch view (displayed component))
-    + route-view ``components/routing/route-view.*`` - place holder component
+    + route-link ``components/routing/route-links.*`` - switch view (displayed component)
+    + route-view ``components/routing/route-view.*`` - place-holder component
     + routing core: ``components/routing/`routing.js`` - core functions
 * theme-manager (module, not a component):
     + theme-manager ``components/theme-manager/theme-manager.js`` - handle CSS themes
@@ -52,6 +52,7 @@ The ideas behind the routing components are this:
 * There is a ``route-link`` web component that acts as a link or butten for switching the ``view`` component that is displayed in the ``route-view``.
 * In the "Main" part of your application, you have to define and register all your routes. The routing core provides the ``register()`` function for this purpose.
 * A route definition is an (literal) object, contaning the url and the class name of the desired view component. One of the routes can be flagged as the ``default`` route, which is automatically switched to, if no other route has been activated, i.e. after starting the application in the browser.
+* Switching route can be intercepted before and after the switch - `registerBeforeGlobalRoute((oldUrl, oldView, newUrl) => {...}` and `registerAfterGlobalRoute((oldUrl, newUrl, newView)  => {...}` - the before interceptor can redirect to another (registered) route.
 
 ^ [top](#my-wc)
 
@@ -130,20 +131,28 @@ All in all, these scripts act as a deployment without bundling.
 ```
 
 * The ``index.js`` defines and registers the __route definitions__ - the module import url for my-wc starts as "``/examples/vendor/my-wc/components/routing/``".
+
 ```javascript
-import { register } from '/examples/vendor/my-wc/components/routing/routing.js';
-import HomeView from './views/HomeView.js';
-import AboutView from './views/AboutView.js';
-register({ default: true, url: '/home', component: HomeView });
-register({ url: '/about', component: AboutView });
+import { register } from '/examples/vendor/my-wc/components/routing/routing.js'
+import HomeView from './views/HomeView.js'
+import AboutView from './views/AboutView.js'
+
+register({ default: true, url: '/home', component: HomeView })
+register({ url: '/about', component: AboutView })
+
+// *** MAIN APP ***
+import MainApp from './components/MainApp/MainApp.js'
+let mainApp = document.createElement(MainApp.tag)
+document.body.appendChild(mainApp)
 ```
 
 * The ``components/MainApp/MainApp.js`` builds a menu by using some ``route-link`` componnt. In addition it provides the ``route-view`` placeholder for displaying the views.
-```javascript
-import RouteView from '/examples/vendor/my-wc/components/routing/route-view.js';
-import RouteLink from '/examples/vendor/my-wc/components/routing/route-link.js';
 
-const template = document.createElement('template');
+```javascript
+import RouteView from '/examples/vendor/my-wc/components/routing/route-view.js'
+import RouteLink from '/examples/vendor/my-wc/components/routing/route-link.js'
+
+const template = document.createElement('template')
 template.innerHTML = `
 <div class="header">Menu:&nbsp;
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
@@ -152,8 +161,69 @@ template.innerHTML = `
 <div class="view">
     <${RouteView.tag}></${RouteView.tag}>
 </div>
-`;
+`
 // The MainApp (<main-app>) implementation comes here...
+```
+
+* Intercepting before and/or after route switch - see: `examples/index.js`:
+    + At it's hard `registerBeforeGlobalRoute` and `registerAfterGlobalRoute` each take an interception callback wich is invoked before or after switching route. 
+    + The before interceptor redirects to the `/login` view unless user has been loggedin. 
+    + The `LoginView` emits `EVENT_USER_LOGGED_IN` event when user logged in...
+    + ...this event will be catched by `onUserLoggedIn` custom event handler, which - finally - does a progammatial route switch to the `/home` route.
+    + Puh!
+
+```javascript
+import { register,
+    switchRoute, registerBeforeGlobalRoute, registerAfterGlobalRoute
+} from '/examples/vendor/my-wc/components/routing/routing.js'
+
+import LoginView, { EVENT_USER_LOGGED_IN } from './views/LoginView.js'
+
+register({ url: '/login', component: LoginView })
+
+// Current User: demo for routing interception:
+let currentUser = {
+    account: '',
+    displayName: '',
+    accessToken: null
+}
+
+// Add a intercept-routing callback - before switching route.
+// Switching can be redirected by returning a registered routing url.
+registerBeforeGlobalRoute((oldUrl, oldView, newUrl) => {
+    // Return routing-url {string} to redirect to url.
+    // Return null or undefined to proceed normal routing.
+    if (currentUser.accessToken === null) {
+        // User not logged in -- redirect him to the login page
+        console.log(`Custom "beforeGlobalRoute" interceptor: -- oldUrl: '${oldUrl}' -- newUlr: '${newUrl}' -- oldView:`, oldView)
+        return '/login'
+    }
+    return null
+})
+
+// Add a intercept-routing callback - after route has been switched.
+// Switching cannot be "undone" i.e redirected to another route.
+registerAfterGlobalRoute((oldUrl, newUrl, newView)  => {
+    if (true === true) { // dummy condition
+        console.log(`Custom "afterGlobalRoute" interceptor: -- oldUrl: '${oldUrl}' -- newUrl: '${newUrl}' -- newView:`, newView)
+    }
+})
+
+// *** MAIN APP ***
+import MainApp from './components/MainApp/MainApp.js'
+
+function onUserLoggedIn(event) {
+    currentUser.account = event.detail.account
+    currentUser.accessToken = event.detail.accessToken
+    currentUser.displayName = event.detail.displayName
+    // Programmatically switch route
+    switchRoute('/home')
+}
+
+let mainApp = document.createElement(MainApp.tag)
+
+document.body.appendChild(mainApp)
+document.body.addEventListener(EVENT_USER_LOGGED_IN, onUserLoggedIn.bind(mainApp))
 ```
 
 ^ [top](#my-wc)
