@@ -6,6 +6,7 @@ __index:__
     + [Installation](#Installation)
     + [Components](#Components)
     + [Routing Components](#Routing-Components)
+    + [Theme Manager](#Theme-Manager)
 * [Examples](#Examples)
     + [Prerequisites](#Prerequisites)
     + [Build the example](#Build-the-example)
@@ -18,7 +19,7 @@ __index:__
 
 These are my native HTML5 web components / custom elements (v1). This is a  frontend package, meant to run in the browser only!  
 
-The idea here is to avoid bundling - HTTP/2 can deliver many small files faster than HTTP/1 can deliver some rare big files (that's not allways true).  
+The idea here is to avoid bundling - HTTP/2 can deliver many small files faster than HTTP/1 can deliver some rare big files (well, that's not allways true).  
 Browsers which support native web components also support HTTP/2.  
 Further more modern browsers support native javascript modules.
 
@@ -39,6 +40,8 @@ Open your favorite shell, navigate into your project folder and run:
     + route-link ``components/routing/route-links.*`` - switch view (displayed component))
     + route-view ``components/routing/route-view.*`` - place holder component
     + routing core: ``components/routing/`routing.js`` - core functions
+* theme-manager (module, not a component):
+    + theme-manager ``components/theme-manager/theme-manager.js`` - handle CSS themes
 
 ^ [top](#my-wc)
 
@@ -52,9 +55,36 @@ The ideas behind the routing components are this:
 
 ^ [top](#my-wc)
 
-# Examples
+## Theme Manager
+
+Theme manager is not a component on it's own, but a collection of functions, meant to handle CSS stylesheets for custom components.  
+> The big advantage of this css-theme implementation for components using shadowRoot is:  
+You can apply literaly every styling for every element inside your shadow tree and the host element!
+
+> The downside of this implementation is: you will end up with many many more `*.css` files.
+
+* By convention, all sources building a component reside together in one folder.
+* By convention, a component has a default stylesheet applied at construction time.
+* The theme is implemented as a _additional_ stylesheet `<link rel="stylesheet">` to the shadowRoot of a component ( a sibling of the default stylesheet).
+* The folder and `*.css` file structure of the origin component is mirrored into theme specific folders (one folder for each theme).
+* The main folder of a theme than act as the 'switch argument' to identify a theme.
+
+__Exported Functions:__
+
+* `setThemeBaseLink(baseThemeLink)` - Set the absolute path of the themes path to use. (example: `/styles/themes/dark-theme`) to denote a specific theme. Call this only once in your app, typically from your main compopnent!
+* `applyTheme(documentFragment, stylesheetLink)` nomen est omen - call this once in the constructor of your custom component. `documentFragment` is the shadowRoot of your component. `stylesheetLink` is the __absolute__ url to your __default__ stylesheet file - this is quite easy to achieve, take a look into the example views.
+* `switchTheme(rootElement, oldBaseThemeLink, newBaseThemeLink)` - switch current theme stylesheets at runtime. `rootElement` is the main component in your app (where you called `setThemeBaseLink`). The `oldBaseThemeLink` is the current `baseThemeLink` set before (in your main component). `newBaseThemeLink` is the new `baseThemeLink` to use as the themes path. This function is typically used only at one place in your app, i.e. a event handler selecting a theme.
+
+To start, take a look at `examples/components/MainApp/MainApp.js` and at some of the views, ie. `examples/views/HomeView.js`.
+
+The default `*.css` files are mirrored from their respective component-folder into `examples/themes/light-theme/...` and `examples/themes/dark-theme/...` - that is: the folder and file structure is copied, while the file content is not copied. You can identify missing theme stylesheet via dev-tools of your browser.
+
+Theme relevant stylesheets elements have set the `name` attribute to `theme-manager` - while switching theme, this is internally used by theme-manager, to identify themable elements (switch theme means to recursively traverse the DOM tree).
+
 
 ^ [top](#my-wc)
+
+# Examples
 
 ## Prerequisites
 

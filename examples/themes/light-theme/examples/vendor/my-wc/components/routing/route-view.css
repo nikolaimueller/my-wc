@@ -1,0 +1,4 @@
+/* light-theme */
+:host {
+	border: 4px dotted yellow;
+}

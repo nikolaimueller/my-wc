@@ -1,5 +1,6 @@
 // Component: RouteLink
 import { switchRoute } from './routing.js'
+import { applyTheme } from '../theme-manager/theme-manager.js'
 
 export default class RouteLink extends HTMLElement {
     static get tag() { return 'route-link' }
@@ -22,6 +23,9 @@ export default class RouteLink extends HTMLElement {
         this.refLinkStyle.setAttribute('rel', 'stylesheet')
         this.refLinkStyle.setAttribute('href', RouteLink.styleSheet_url)
         shadow.appendChild(this.refLinkStyle)
+
+        // Applay theme
+        applyTheme(shadow, RouteLink.styleSheet_url);
         
         this.refSpan = document.createElement('span')
         this.refSpan.onclick = this.onClickHandler

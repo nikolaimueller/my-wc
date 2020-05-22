@@ -1,0 +1,27 @@
+/* dark-theme */
+body {
+	color: white;
+	background-color: black;
+}
+
+:host {
+	border: 4px dashed green;
+	color: white;
+	background-color: black;
+}
+
+div.header {
+    background-color: #404040;
+    margin: 10px;
+    padding: 10px;
+}
+
+div.view {
+    background-color: #404040;
+    margin: 10px;
+    padding: 10px;
+}
+
+a {
+	color: lightseagreen;
+}

@@ -1,0 +1,5 @@
+/* dark-theme */
+:host {
+    color: white;
+    background-color: #00000040;
+}

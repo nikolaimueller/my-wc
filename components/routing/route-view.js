@@ -8,6 +8,7 @@ import {
     interceptAfter,
     switchRoute
 } from './routing.js'
+import { applyTheme } from '../theme-manager/theme-manager.js'
 
 export default class RouteView extends HTMLElement {
     static get tag() { return 'route-view' }
@@ -27,6 +28,9 @@ export default class RouteView extends HTMLElement {
         styleLink.setAttribute('rel', 'stylesheet')
         styleLink.setAttribute('href', RouteView.styleSheet_url)
         shadow.appendChild(styleLink)
+
+        // Set a specific theme to use
+        applyTheme(shadow, RouteView.styleSheet_url);
     }
 
     connectedCallback() {

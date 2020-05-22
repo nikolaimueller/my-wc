@@ -1,11 +1,21 @@
 import RouteView from '/examples/vendor/my-wc/components/routing/route-view.js';
 import RouteLink from '/examples/vendor/my-wc/components/routing/route-link.js';
+import { setThemeBaseLink, applyTheme, switchTheme } from '/examples/vendor/my-wc/components/theme-manager/theme-manager.js'
+
+const ID_THEME_SELECT = 'id-theme-select'
+
+const light_theme_Base_Path = '/examples/themes/light-theme'
+const dark_theme_Base_Path = '/examples/themes/dark-theme'
 
 const template = document.createElement('template');
 template.innerHTML = `
 <div class="header">Menu:&nbsp;
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
-    <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}>
+    <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
+    &nbsp; &nbsp; Select Theme: <select id="${ID_THEME_SELECT}">
+        <option>${light_theme_Base_Path}</option>
+        <option>${dark_theme_Base_Path}</option>
+    </select>
 </div>
 <div class="view">
     <${RouteView.tag}></${RouteView.tag}>
@@ -14,7 +24,11 @@ template.innerHTML = `
 
 export default class MainApp extends HTMLElement {
     static get tag() { return 'main-app' };
-    static get STYLESHEET_LINK() { return './components/MainApp/MainApp.css' }
+    static get styleSheet_url() {
+        // Replace module url's ".js" extension with ".css"
+        // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
+        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css';
+    }
 
     constructor() {
         super()
@@ -24,11 +38,49 @@ export default class MainApp extends HTMLElement {
         // Add Component StyleSheet-Link
         this.refLinkStyle = document.createElement('link');
         this.refLinkStyle.setAttribute('rel', 'stylesheet');
-        this.refLinkStyle.setAttribute('href', MainApp.STYLESHEET_LINK);
+        this.refLinkStyle.setAttribute('href', MainApp.styleSheet_url);
         shadow.appendChild(this.refLinkStyle);
+
+        // Set theme base-path for the whole application.
+        // this._theme = dark_theme_Base_Path // Uncomment one of thiese 2 lines.
+        this._theme = light_theme_Base_Path // Uncomment one of thiese 2 lines.
+        setThemeBaseLink(this._theme)
+
+        // Apply theme.
+        applyTheme(shadow, MainApp.styleSheet_url);
 
         // Add template content
         shadow.appendChild(template.content.cloneNode(true));
+
+        // Event handler
+        this.on_change_themeSelect = this.on_change_themeSelect.bind(this)
+    }
+
+    
+    connectedCallback() {
+        // Invoked each time the custom element is appended into a document-connected element.
+        // console.log(`${MainApp.tag}.connectedCallback()`)
+        if (this.isConnected) {
+            let refThemeSelect = this.shadowRoot.getElementById(ID_THEME_SELECT)
+            refThemeSelect.addEventListener('change', this.on_change_themeSelect)
+        }
+    }
+
+    disconnectedCallback() {
+        // Invoked each time the custom element is disconnected from the document's DOM.
+        // console.log(`${MainApp.tag}.disconnectedCallback()`)
+        let refThemeSelect = this.shadowRoot.getElementById(ID_THEME_SELECT)
+        refThemeSelect.removeEventListener('change', this.on_change_themeSelect)
+    }
+
+    on_change_themeSelect(event) {
+        // console.log(`${MainApp.tag}.on_change_themeSelect()`, event)
+        let refThemeSelect = this.shadowRoot.getElementById(ID_THEME_SELECT)
+
+        let oldBaseThemeLink = '' + this._theme
+        let newBaseThemeLink = refThemeSelect.value
+        switchTheme(this, oldBaseThemeLink, newBaseThemeLink)
+        this._theme = newBaseThemeLink
     }
 }
 

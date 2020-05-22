@@ -1,0 +1,4 @@
+/* dark-theme */
+:host {
+	border: 4px dotted silver;
+}

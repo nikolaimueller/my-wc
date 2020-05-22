@@ -1,6 +1,8 @@
 // Component: LoginView
 // See:   https://developer.mozilla.org/en-US/docs/Web/Web_Components
 
+import {applyTheme} from '../vendor/my-wc/components/theme-manager/theme-manager.js'
+
 export const EVENT_USER_LOGGED_IN = 'user-logged-in' // Export const to avoid typo (we dispatch an custom-event here, wich will be catched inside index.js)
 
 // HTML template
@@ -36,6 +38,9 @@ export default class LoginView extends HTMLElement {
         this.refLinkStyle.setAttribute('rel', 'stylesheet')
         this.refLinkStyle.setAttribute('href', LoginView.styleSheet_url)
         shadow.appendChild(this.refLinkStyle)
+
+        //
+        applyTheme(shadow, LoginView.styleSheet_url)
 
         // Add template content
         shadow.appendChild(template.content.cloneNode(true))

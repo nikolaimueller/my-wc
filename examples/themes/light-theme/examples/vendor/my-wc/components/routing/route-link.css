@@ -1,0 +1,5 @@
+/* light-theme */
+:host {
+    color: black;
+    background-color: #ffffff40;
+}

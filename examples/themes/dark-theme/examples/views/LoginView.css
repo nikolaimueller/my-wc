@@ -1,0 +1,9 @@
+/* light-theme */
+p {
+    color: lightskyblue
+}
+
+button {
+    color: white;
+    background: #404040;
+}
