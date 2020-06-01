@@ -19,17 +19,17 @@ export function applyTheme(documentFragment, stylesheetLink) {
     if (documentFragment instanceof DocumentFragment === false)  {
         let err = new Error('ThemeManager.applyTheme: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment")');
         console.error(err);
-        throw err;
+        return // throw err;
     }
     if (_baseThemeLink.length === 0) {
         let err = new Error('ThemeManager.applyTheme: Error: "baseThemeLink" has not been set! (call "setThemeBaseLink" before calling "applyTheme" !)');
         console.error(err);
-        throw err;
+        return // throw err;
     }
     if (stylesheetLink.length < 5 || !stylesheetLink.endsWith('.css')) {
         let err = new Error(`ThemeManager.applyTheme: Error: "stylesheetLink" ("${stylesheetLink}") has invallid value!`);
         console.error(err);
-        throw err;
+        return // throw err;
     }
     
     let stylesheetLinkUrl = new URL(stylesheetLink)
