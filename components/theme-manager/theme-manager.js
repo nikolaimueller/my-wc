@@ -17,19 +17,16 @@ export function setThemeBaseLink(baseThemeLink) {
 
 export function applyTheme(documentFragment, stylesheetLink) {    
     if (documentFragment instanceof DocumentFragment === false)  {
-        let err = new Error('ThemeManager.applyTheme: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment")');
-        console.error(err);
-        return // throw err;
+        console.warn('ThemeManager.applyTheme: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment")');
+        return
     }
     if (_baseThemeLink.length === 0) {
-        let err = new Error('ThemeManager.applyTheme: Error: "baseThemeLink" has not been set! (call "setThemeBaseLink" before calling "applyTheme" !)');
-        console.error(err);
-        return // throw err;
+        console.warn('ThemeManager.applyTheme: Error: "baseThemeLink" has not been set! (call "setThemeBaseLink" before calling "applyTheme" !)');
+        return
     }
     if (stylesheetLink.length < 5 || !stylesheetLink.endsWith('.css')) {
-        let err = new Error(`ThemeManager.applyTheme: Error: "stylesheetLink" ("${stylesheetLink}") has invallid value!`);
-        console.error(err);
-        return // throw err;
+        console.warn(`ThemeManager.applyTheme: Error: "stylesheetLink" ("${stylesheetLink}") has invallid value!`);
+        return
     }
     
     let stylesheetLinkUrl = new URL(stylesheetLink)
