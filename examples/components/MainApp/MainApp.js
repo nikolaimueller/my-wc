@@ -13,6 +13,7 @@ template.innerHTML = `
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
     <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
     &nbsp; &nbsp; Select Theme: <select id="${ID_THEME_SELECT}">
+    <option disabled value="" selected>Please select one</option>
         <option>${light_theme_Base_Path}</option>
         <option>${dark_theme_Base_Path}</option>
     </select>
@@ -42,8 +43,8 @@ export default class MainApp extends HTMLElement {
         shadow.appendChild(this.refLinkStyle);
 
         // Set theme base-path for the whole application.
-        // this._theme = dark_theme_Base_Path // Uncomment one of thiese 2 lines.
-        this._theme = light_theme_Base_Path // Uncomment one of thiese 2 lines.
+        this._theme = dark_theme_Base_Path // Uncomment one of thiese 2 lines.
+        // this._theme = light_theme_Base_Path // Uncomment one of thiese 2 lines.
         setThemeBaseLink(this._theme)
 
         // Apply theme.
@@ -52,7 +53,12 @@ export default class MainApp extends HTMLElement {
         // Add template content
         shadow.appendChild(template.content.cloneNode(true));
 
-        // Event handler
+        // Pre-select themes select-option
+        let refThemeSelect = this.shadowRoot.getElementById(ID_THEME_SELECT)
+        let matchOption = Array.from(refThemeSelect.options).find(option => option.textContent === this._theme)
+        matchOption.selected = true
+
+        // Event handler, the react way.
         this.on_change_themeSelect = this.on_change_themeSelect.bind(this)
     }
 
