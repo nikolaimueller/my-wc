@@ -12,8 +12,9 @@ template.innerHTML = `
 <div class="header">Menu:&nbsp;
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
     <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
-    &nbsp; &nbsp; Select Theme: <select id="${ID_THEME_SELECT}">
-    <option disabled value="" selected>Please select one</option>
+    &nbsp; &nbsp; Select Theme: 
+    <select id="${ID_THEME_SELECT}">
+        <option disabled value="" selected>Please select one</option>
         <option>${light_theme_Base_Path}</option>
         <option>${dark_theme_Base_Path}</option>
     </select>
