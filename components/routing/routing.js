@@ -6,6 +6,8 @@ let viewTarget = null
 let currentRoute = null
 let defaultRoute = null
 
+let lastRouteLink = null
+
 export function getCurrentRoute() { return currentRoute }
 export function setCurrentRoute(route) { currentRoute = route }
 export function getDefaultRoute() { return defaultRoute }
@@ -49,7 +51,7 @@ export function register(route) {
     }
 }
 
-export function switchRoute(newUrl) {
+export function switchRoute(newUrl, routeLink) {
     if (!newUrl) {
         throw new Error('Routing.switchRoute: Param newUrl missing.')
     }
@@ -58,11 +60,13 @@ export function switchRoute(newUrl) {
     }
     
     let oldUrl = currentRoute?.url
+    let isHighlightingActivated = true // default is highlighting route-link on activation.
 
     // Handle interception before routing
     let interceptUrl = interceptBefore(currentRoute?.url, currentRoute?.component, newUrl)
     if (typeof interceptUrl === 'string' && interceptUrl.length > 0) {
         newUrl = interceptUrl
+        isHighlightingActivated = false
     }
 
     // Switch displayed content 
@@ -70,6 +74,17 @@ export function switchRoute(newUrl) {
 
     // Handle interception after routing
     interceptAfter(oldUrl, newUrl, currentRoute?.component /* oldUrl, newUrl, newView */)
+
+    // Handle highlighting on activation
+    if (isHighlightingActivated === true && lastRouteLink !== null) {
+        lastRouteLink.setAttribute('activated', 'false')
+        if (routeLink) {
+            routeLink.setAttribute('activated', 'true')
+        }
+    }
+    if (routeLink) { // Set last-route-link any way.
+        lastRouteLink = routeLink
+    }
 }
 
 export function registerTarget(target) {

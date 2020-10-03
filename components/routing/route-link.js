@@ -4,7 +4,7 @@ import { applyTheme } from '../theme-manager/theme-manager.js'
 
 export default class RouteLink extends HTMLElement {
     static get tag() { return 'route-link' }
-    static get observedAttributes() { return ['url', 'title'] }
+    static get observedAttributes() { return ['url', 'title', 'activated', 'highlight-activated'] }
     static get styleSheet_url() {
         // Replace module url's ".js" extension with ".css"
         // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
@@ -28,25 +28,51 @@ export default class RouteLink extends HTMLElement {
         applyTheme(shadow, RouteLink.styleSheet_url);
         
         this.refSpan = document.createElement('span')
-        this.refSpan.onclick = this.onClickHandler
         this.refSpan.textContent = this.title || '(-Route.Url not set-)'
         
         shadow.appendChild(this.refSpan)
+
+        this.onClickHandler = this.onClickHandler.bind(this)
     }
 
     onClickHandler(e) {
-        switchRoute(this.url)
+        switchRoute(e.target.url, this)
+    }
+
+    connectedCallback() {
+        if (this.isConnected) {
+            this.refSpan.addEventListener('click', this.onClickHandler)
+        }
+    }
+
+    disconnectedCallback() {
+        this.refSpan.removeEventListener('click', this.onClickHandler)
     }
     
 	attributeChangedCallback(name, oldValue, newValue) {
 		switch (name) {
-		  case 'title':
-            this.refSpan.textContent = newValue
-			break
-		case 'url':
-            this.refSpan.url = newValue
-            this.refSpan.title = newValue
-			break
+		    case 'title':
+                this.refSpan.textContent = newValue
+                break
+            case 'url':
+                this.refSpan.url = newValue
+                this.refSpan.title = newValue
+                break
+            case 'activated':
+                // Highlighting activated route-link is the default behavior.
+                let isHighlightActivated = (!this.hasAttribute('highlight-activated') || this.getAttribute('highlight-activated') === 'true')
+
+                if (isHighlightActivated === true) {
+                        if (newValue === 'true') {
+                            this.refSpan.classList.add('activated')
+                        } else {
+                            this.refSpan.classList.remove('activated')
+                        }
+                    }
+                break
+            case 'highlight-activated':
+                // No action needed here, see 'activated' attribute.
+                break
         }
 	}
 }

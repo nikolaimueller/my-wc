@@ -5,3 +5,11 @@
 :hover {
     color: gray;
 }
+
+:active {
+    color: red;
+}
+
+.activated {
+    color: greenyellow;
+}

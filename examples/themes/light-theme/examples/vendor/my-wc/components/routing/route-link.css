@@ -3,3 +3,15 @@
     color: black;
     background-color: #ffffff40;
 }
+
+:hover {
+    color: green;
+}
+
+:active {
+    color: white;
+}
+
+.activated {
+    color: #0060ff;
+}
