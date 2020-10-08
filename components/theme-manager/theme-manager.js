@@ -1,12 +1,18 @@
 
 let _baseThemeLink = ''
-let _dropPath = null
+let _dropPaths = []
 
 function concatPath(part1, part2) {
-    if (_dropPath !== null && part2.startsWith(_dropPath)) {
-        part2 = part2.substr(_dropPath.length)
+    // drop prefix path if given.
+    if (_dropPaths.length > 0) {
+        let matchDropPath = _dropPaths.find(drop => {
+            return part2.startsWith(drop)
+        })
+        if (matchDropPath !== undefined) {
+            part2 = part2.substr(matchDropPath.length)
+        }
     }
-
+    // Concat ensuring clean slashes ("/") in path 
     if (part1.endsWith('/') && part2.startsWith('/')) {
         return part1 + part2.substring(1);
     } else if (!part1.endsWith('/') && !part2.startsWith('/')) {
@@ -15,9 +21,11 @@ function concatPath(part1, part2) {
     return part1 + part2;
 }
 
-export function setThemeBaseLink(baseThemeLink, dropPath) {
-    _baseThemeLink = baseThemeLink;
-    _dropPath = dropPath || null
+export function setThemeBaseLink(baseThemeLink, dropPaths) {
+    _baseThemeLink = baseThemeLink
+    if (dropPaths && Array.isArray(dropPaths)) {
+        _dropPaths = dropPaths || []
+    }
     console.log(`ThemeManager.setThemeBaseLink to: "${baseThemeLink}".`);
 }
 
