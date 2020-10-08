@@ -1,7 +1,12 @@
 
-let _baseThemeLink = '';
+let _baseThemeLink = ''
+let _dropPath = null
 
 function concatPath(part1, part2) {
+    if (_dropPath !== null && part2.startsWith(_dropPath)) {
+        part2 = part2.substr(_dropPath.length)
+    }
+
     if (part1.endsWith('/') && part2.startsWith('/')) {
         return part1 + part2.substring(1);
     } else if (!part1.endsWith('/') && !part2.startsWith('/')) {
@@ -10,8 +15,9 @@ function concatPath(part1, part2) {
     return part1 + part2;
 }
 
-export function setThemeBaseLink(baseThemeLink) {
+export function setThemeBaseLink(baseThemeLink, dropPath) {
     _baseThemeLink = baseThemeLink;
+    _dropPath = dropPath || null
     console.log(`ThemeManager.setThemeBaseLink to: "${baseThemeLink}".`);
 }
 
