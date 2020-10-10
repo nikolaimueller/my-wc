@@ -37,7 +37,7 @@ export function register(route) {
         throw new Error('Routing: Invalid route, url missing.')
     }
     if (registry.find((r) => r.url == route.url.toLowerCase())) {
-        throw new Error(`Routing: route '${r.url}' already registered.`)
+        throw new Error(`Routing: route '${route.url}' already registered.`)
     }
 
     // Insert route registry.
@@ -47,6 +47,21 @@ export function register(route) {
     if (route.default && route.default === true) {
         if (defaultRoute === null) {
             defaultRoute = route
+        }
+    }
+
+    // Async loading module
+    if (route.component && (typeof route.component === 'string' || route.component instanceof String)) {
+        if (route.module && (typeof route.module === 'string' || myroute.module instanceof String)) {
+            // Async import
+            import(route.module)
+            .then(exported => {
+                // console.log(`routing.register-THEN(): async loading module - component: ${route.component} - module: ${route.module}- - exported:`, exported)
+                route.component = exported.default
+            })
+            .catch (err => {
+                console.error(`routing.register-CATCH(): async loading module - component: ${route.component} - module: ${route.module} - error:`, err)
+            })
         }
     }
 }
