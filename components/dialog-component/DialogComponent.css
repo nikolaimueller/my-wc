@@ -1,0 +1,88 @@
+:host {
+    display: none;
+    /* display: block; */
+    position: fixed;
+    overflow: auto;
+    top: 11vh;
+    left: 10vw;
+    width: 77%;
+    height: 76%;
+    border: 1px solid silver; /* Drop this line if you don't like red boxes ;-) */
+    border-radius: 8px;
+    background-color: #808080c0;
+    padding: 10px;
+}
+
+@media (max-width: 800px) {
+    :host {
+        top: 5vh;
+        left: 8vw;
+        width: 80%;
+        height: 86%;
+    }
+}
+@media (max-width: 600px) {
+    :host {
+        top: 2vh;
+        left: 4vw;
+        width: 82%;
+        height: 92%;
+    }
+}
+
+.header-container {
+    display: flex;
+    box-sizing: border-box;
+    border-top: 1px solid silver;
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+    border-bottom: 0;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    background-color: #404040;
+}
+.header-text {
+    box-sizing: border-box;
+    border: 0;
+    border-right: 1px solid gray;
+    width: 100%;
+    padding: 2px 4px 2px 10px;
+    font-weight: bold;
+    color: white;
+}
+.header-close-button {
+    box-sizing: border-box;
+    border: 0;
+    border-left: 1px solid silver;
+    min-width: 1.8em; width: 1.8em; max-width: 1.8em;
+    padding: 2px 4px 2px 4px;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    color: white;
+    background-color: darkred;
+    cursor: pointer;
+}
+
+.content-container {
+    box-sizing: border-box;
+    border: 1px solid silver;
+    padding: 20px;
+    min-height: calc(100% - 3.3em);
+
+    color: black;
+    background-color: white;
+}
+
+.footer-container {
+    box-sizing: border-box;
+    border-top: 1px solid #00000000;
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+    border-bottom: 1px solid silver;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+    padding: 2px 4px 2px 10px;
+    color: white;
+    background-color: #404040;
+}
