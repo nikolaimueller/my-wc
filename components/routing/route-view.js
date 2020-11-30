@@ -102,50 +102,15 @@ export default class RouteView extends HTMLElement {
             return null
         }
 
-        // Handle async loading route's component
-        // $$$
-        // $$$ WORKAROUND: THIS IS A BAD HACK !!
-        // $$$ - BETTER-SOLUTION: turn route's 'component' property into Promise, delivering component async !! $$$
-        // $$$
+        // Handle sync or async loading route's component
         let fuSwitchContent = doSwitchContent.bind(this)
-        if (newRoute.component && (typeof newRoute.component === 'string' || newRoute.component instanceof String)) {
-            console.warn('*** <route-view>.switchContent(): newRoute.component - stil loading async(!) - wait some time ...')
-            let msecs = 500
-            setTimeout(function () {
-                if (newRoute.component && (typeof newRoute.component === 'string' || newRoute.component instanceof String)) {
-                    console.error(`*** <route-view>.switchContent(): newRoute.component - stil loading async! (after ${msecs} msec) - TIMEOUT(!)`)
-                } else {
-                    console.warn(`*** <route-view>.switchContent(): newRoute.component - ASYNC LOADED (after ${msecs} msecs)`)
-                    return fuSwitchContent(currentRoute, newRoute)
-                }
-            }, msecs)
+        if (newRoute.component instanceof Promise) {
+            let promise = newRoute.component
+            promise.then(() => fuSwitchContent(currentRoute, newRoute))
+            .catch(err => console.error(err))
         } else {
             return fuSwitchContent(currentRoute, newRoute)
         }
-
-        /*
-        // Switch the displayed component
-        if (!currentRoute || newRoute.url !== currentRoute.url) {
-            // ..Remove old routeView content node (child).
-            if (this.refRoutingView) {
-                this.shadowRoot.removeChild(this.refRoutingView)
-            }
-            // ...append new created content node to routeView.
-            this.refRoutingView = document.createElement(newRoute.component.tag)
-            
-            // $$$ TODO: Handle Themes.
-            this.refRoutingView.setAttribute('theme', 'theme')
-
-            this.shadowRoot.appendChild(this.refRoutingView)
-
-            // Reflect current route into history state
-            let stateObj = null
-            history.replaceState(stateObj, `route: ${newRoute.url}`, `#${newRoute.url}`)
-
-            return newRoute
-        }
-        return null
-        */
     }
 }
 // Register custom element.

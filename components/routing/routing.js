@@ -54,8 +54,10 @@ export function register(route) {
     if (route.component && (typeof route.component === 'string' || route.component instanceof String)) {
         if (route.module && (typeof route.module === 'string' || myroute.module instanceof String)) {
             // Async import
-            import(route.module)
-            .then(exported => {
+            let promise = import(route.module)
+            route.component = promise
+
+            promise.then(exported => {
                 // console.log(`routing.register-THEN(): async loading module - component: ${route.component} - module: ${route.module}- - exported:`, exported)
                 route.component = exported.default
             })
