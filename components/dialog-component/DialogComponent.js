@@ -1,5 +1,5 @@
 // Component: DialogComponent
-
+import { getOptions } from '../options.js'
 
 // *** Singleton instance. ***
 let _refDialogInstance = null
@@ -73,9 +73,11 @@ export default class DialogComponent extends HTMLElement {
     static get tag() { return 'dialog-component' }
     // static get observedAttributes() { return ['exampleattr'] }
     static get styleSheet_url() {
-        // Replace module url's ".js" extension with ".css"
-        // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
-        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
+        // $$$ return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
+        return (document.location.origin 
+            + document.location.pathname.replace('index.html', '') 
+            + getOptions().prefix
+            + '/my-wc/components/dialog-component/DialogComponent.css')
     }
 
     static get instance() {
