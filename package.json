@@ -25,7 +25,7 @@
   "author": "nikolai@nikim.de",
   "license": "ISC",
   "dependencies": {
-    "mkdirp": "^1.0.3",
+    "mkdirp": "^1.0.4",
     "ncp": "^2.0.0",
     "rimraf": "^3.0.2"
   }
