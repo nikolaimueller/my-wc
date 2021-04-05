@@ -1,4 +1,5 @@
 // Component: RouteLink
+import { getOptions } from '../options.js'
 import { switchRoute } from './routing.js'
 import { applyTheme } from '../theme-manager/theme-manager.js'
 
@@ -6,9 +7,10 @@ export default class RouteLink extends HTMLElement {
     static get tag() { return 'route-link' }
     static get observedAttributes() { return ['url', 'title', 'activated', 'highlight-activated'] }
     static get styleSheet_url() {
-        // Replace module url's ".js" extension with ".css"
-        // Accept an exception to occure here, i.e. if "import.meta.url" doesn't exist !!
-        return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
+        // $$$  return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
+        return (document.location.origin 
+            + document.location.pathname.replace('index.html', '') 
+            + getOptions().prefix + '/my-wc/components/routing/route-link.css')
     }
 
     constructor() {

@@ -133,10 +133,12 @@ All in all, these scripts act as a deployment without bundling.
 * The ``index.js`` defines and registers the __route definitions__ - the module import url for my-wc starts as "``/examples/vendor/my-wc/components/routing/``".
 
 ```javascript
+import { setOptions } from '/examples/vendor/my-wc/components/options.js'
 import { register } from '/examples/vendor/my-wc/components/routing/routing.js'
 import HomeView from './views/HomeView.js'
 import AboutView from './views/AboutView.js'
 
+setOptions({prefix: 'vendor'})
 register({ default: true, url: '/home', component: HomeView })
 register({ url: '/about', component: AboutView })
 

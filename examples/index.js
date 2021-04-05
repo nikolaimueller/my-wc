@@ -1,4 +1,5 @@
 // *** Setup routing ***
+import { setOptions } from '/examples/vendor/my-wc/components/options.js'
 import {
     register,
     switchRoute,
@@ -19,6 +20,8 @@ let currentUser = {
 }
 
 // Define routes
+setOptions({prefix: 'vendor'})
+
 register({ default: true, url: '/home', component: HomeView })
 register({ url: '/about', component: AboutView })
 register({ url: '/login', component: LoginView })
