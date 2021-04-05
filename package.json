@@ -8,8 +8,8 @@
     "clean": "rimraf ./examples/vendor",
     "prebuild": "npm run clean -s",
     "build": "npm run build-1 -s  &  npm run build-2 -s",
-    "build-1": "node_modules/.bin/mkdirp ./examples/vendor/my-wc/components",
-    "build-2": "node_modules/.bin/ncp ./components ./examples/vendor/my-wc/components"
+    "build-1": "mkdirp ./examples/vendor/my-wc/components",
+    "build-2": "ncp ./components ./examples/vendor/my-wc/components"
   },
   "repository": {
     "type": "git",
