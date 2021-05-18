@@ -1,5 +1,4 @@
 // Component: RouteView
-import { getOptions } from '../options.js'
 import {
     getCurrentRoute, setCurrentRoute,
     getDefaultRoute,
@@ -14,11 +13,8 @@ import { applyTheme } from '../theme-manager/theme-manager.js'
 export default class RouteView extends HTMLElement {
     static get tag() { return 'route-view' }
     static get styleSheet_url() {
-        // $$$ return import.meta.url.substr(0, import.meta.url.length - '.js'.length) + '.css'
-        return document.location.origin 
-            + document.location.pathname.replace('index.html', '') 
-            + getOptions().prefix 
-            + '/my-wc/components/routing/route-view.css'
+        if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
+        if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
     }
     constructor() {
         super()
