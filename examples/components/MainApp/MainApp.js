@@ -11,6 +11,7 @@ const template = document.createElement('template');
 template.innerHTML = `
 <div class="header">Menu:&nbsp;
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
+    <${RouteLink.tag} title="Table" url="/table"></${RouteLink.tag}> |
     <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
     &nbsp; &nbsp; Select Theme: 
     <select id="${ID_THEME_SELECT}">
