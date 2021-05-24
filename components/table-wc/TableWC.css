@@ -1,0 +1,66 @@
+/* TableWC.css */
+
+:host {
+    display: block;
+}
+
+table {
+    border: 1px solid #80808040;
+    border-collapse: collapse;
+}
+
+thead {
+    border-bottom: 2px solid #80808040;
+}
+
+/* TODO:  tbody {} */
+/* TODO:  tfoot {} */
+/* TODO:  tr {} */
+
+th {
+    /* border: 1px solid silver; */
+    padding-top: 0.5rem;
+    padding-right: 2rem;
+    padding-bottom: 0.5rem;
+    padding-left: 2rem;
+}
+
+td {
+    /* border: 1px solid silver; */
+    padding-top: 0.5rem;
+    padding-right: 2rem;
+    padding-bottom: 0.5rem;
+    padding-left: 2rem;
+}
+
+/* marked = single-click */
+.marked-row {
+    background-color: #60b0ff60;
+}
+.marked-col {
+    background-color: #ffa0a060;
+}
+
+/* selected = double-click */
+.selected-row {
+    background-color: #60b0ff30;
+    border-top: 2px solid #60b0ff;
+    border-bottom: 2px solid #60b0ff;
+}
+.selected-col {
+    background-color: #ffa0a030;
+    border-left: 2px solid #ffa0a0;
+    border-right: 2px solid #ffa0a0;
+}
+
+/* activated = triple-click */
+.activated-row {
+    background-color: #d8ff8030;
+    border-top: 2px solid #d8ff80;
+    border-bottom: 2px solid #d8ff80;
+}
+.activated-col {
+    background-color: #80ff8030;
+    border-left: 2px solid #80ff80a0;
+    border-right: 2px solid #80ff80a0;
+}

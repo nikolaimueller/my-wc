@@ -11,6 +11,7 @@ __index:__
     + [Prerequisites](#Prerequisites)
     + [Build the example](#Build-the-example)
     + [How routing works in the example](#How-routing-works-in-the-example)
+    + [Table-WC Component](#Table-WC-Component)
 
 
 *__HINT: This is in a very early stage of development!__*
@@ -39,9 +40,10 @@ Open your favorite shell, navigate into your project folder and run:
 * Routing:
     + route-link ``components/routing/route-links.*`` - switch view (displayed component)
     + route-view ``components/routing/route-view.*`` - place-holder component
-    + routing core: ``components/routing/`routing.js`` - core functions
+    + routing core: ``components/routing/routing.js`` - core functions
 * theme-manager (module, not a component):
     + theme-manager ``components/theme-manager/theme-manager.js`` - handle CSS themes
+* table-wc `components/table-wc/Table.wc` - simple table component
 
 ^ [top](#my-wc)
 
@@ -229,6 +231,23 @@ document.body.addEventListener(EVENT_USER_LOGGED_IN, onUserLoggedIn.bind(mainApp
 ```
 
 ^ [top](#my-wc)
+
+---
+
+## Table-WC Component
+
+Example sources:
+
+* `examples/views/TableView.js` - example containing a TableWC component
+* `examples/views/TableView.js` - example containing a TableWC component
+* `themes/dark-theme/vendor/m-wc/components/table-wc/TableWC.css`
+* `themes/dark-theme/vendor/m-wc/components/table-wc/TableWC.css`
+
+
+^ [top](#my-wc)
+
+---
+
 
 ## *My developing hints*
 
