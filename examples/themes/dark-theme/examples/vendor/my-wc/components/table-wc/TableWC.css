@@ -1,0 +1,7 @@
+/* dark-theme - TableWC.css */
+
+table {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: #00000080;
+}

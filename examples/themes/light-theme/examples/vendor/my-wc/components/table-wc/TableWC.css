@@ -1,0 +1,15 @@
+/* light-theme - TableWC.css */
+
+table {
+    padding: 1rem;
+    margin: 1rem;
+    background-color: white;
+}
+
+th {
+    border: 1px solid #80808040;;
+}
+
+td {
+    border: 1px solid #80808040;
+}

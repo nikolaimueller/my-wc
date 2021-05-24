@@ -1,0 +1,13 @@
+/* TableView.css */
+
+:host {
+    display: block;
+    padding: 1rem;
+}
+
+pre {
+    border: 1px solid #80808080;
+    padding: 2px;
+    color: white;
+    background-color: #00000080;
+}
