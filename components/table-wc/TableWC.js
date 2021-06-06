@@ -1,13 +1,38 @@
 // Component: TableComponent
 // See:   https://developer.mozilla.org/en-US/docs/Web/Web_Components
 //
+// TODO: Handle Touch events on mobile devices.
 // see:   https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
 // see:   https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent
 
 import {applyTheme} from '../theme-manager/theme-manager.js'
 
+/**
+ * Mouse event(s) to be handled by this component: 1-click, 2-click, 3-click.
+ * A synthetic CustomEvent will be fired when the mentioned numbers of mouse clicks accure on a row.
+ * 
+ * @attribute {string} - comma separated list of click-numbers, ie.: "1,2,3"
+ */
 export const ATTRIBUTE_CLICKS_TO_HANDLE = 'clicks-to-handle'
 
+/** Name of the custom event fired on clicking a table row(cell).
+ * 
+ * Fired on 1-click (mark), 2-click (select) and 3-click (activate) mouse events.
+ * provides `event.detail`:
+ *  * click - 1 | 2 | 3 - the number of click events
+ *  * refTR - the clicked table row (<tr>) DOM element
+ *  * refTD - the cliecked table data (<td>) DOM element
+ *  * rowData - reference to the data object of the clicked row (an element of table's data array)
+ *  * cellData - the data value of the clicked cell (<td>)
+ *  * isRowMarked - boolean: true after 1-click mouse event, if row has not been marked before
+ *  * isRowSelected - boolean: true on 2-click mouse event, if row has not been selected before
+ *  * isRowActivated - boolean: true on 3-click mouse event, if row hsa not been activated before
+ * */
+export const EVENT_TABLEWC_CELL_SELECTED = 'event-table-wc-cell-selected'
+
+/** 
+ * $$$ TODO
+ * */
 export default class TableWC extends HTMLElement {
     static get tag() { return 'table-wc' }
     static get observedAttributes() { return [ATTRIBUTE_CLICKS_TO_HANDLE] }
@@ -23,13 +48,13 @@ export default class TableWC extends HTMLElement {
         // Table data
         this.dataRows = null
 
-        // Single click
+        // Single click - marked
         this.markedRow = null
         this.markedColumn = null
-        // Double click
+        // Double click - selected
         this.selectedRow = null
         this.selectedColumn = null
-        // Triple click
+        // Triple click - activated
         this.activatedRow = null
         this.activatedColumn = null
 
@@ -116,7 +141,7 @@ export default class TableWC extends HTMLElement {
 
     connectedCallback() {
         // Invoked each time the custom element is appended into a document-connected element.
-        console.log(`${TableWC.tag}.connectedCallback(): NOT IMPLEMENTED !!`)
+        // console.log(`${TableWC.tag}.connectedCallback(): NOT IMPLEMENTED !!`)
         if (this.isConnected) {
             // implement your callback here.
             //if (this.dataCols !== null && this.dataRows !== null) {
@@ -137,11 +162,9 @@ export default class TableWC extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         // Invoked each time one of the custom element's attributes is added, removed, or changed.
-        console.log(`${TableWC.tag}.attributeChangedCallback(): NOT IMPLEMENTED !!`)
         switch (name) {
             case ATTRIBUTE_CLICKS_TO_HANDLE:
                 // Do something meaningfull with your new attribute value.
-                // this.clicksToHandle = {single:true, double:false, triple:false}
                 console.log(`${TableWC.tag}.attributeChangedCallback() - name: '${name}' - oldValue: '${oldValue}' - newValue: '${newValue}'`)
                 if (newValue.length > 0) {
                     this.clicksToHandle = []
@@ -159,6 +182,9 @@ export default class TableWC extends HTMLElement {
     // *** Render ***
 
     render() {
+        if (this.refTable !== null) {
+            this.refTable.remove()
+        }
         this.refTable = document.createElement('table')
         this.renderTable()
         this.shadowRoot.appendChild(this.refTable)
@@ -240,8 +266,9 @@ export default class TableWC extends HTMLElement {
 
     on_click_th(event) {
         let clicks = event.detail
-        console.log(`${TableWC.tag}.on_click_th - clicks: ${clicks} - event:`, event)
+        // console.log(`${TableWC.tag}.on_click_th - clicks: ${clicks} - event:`, event)
 
+        // TODO: Emit custom event.
         let trs = this.refTable.rows
         let refTH = event.target
         if (clicks === 1 && this.clicksToHandle.find(clickNum => clickNum === clicks)) {
@@ -255,15 +282,45 @@ export default class TableWC extends HTMLElement {
     
     on_click_td(event) {
         let clicks = event.detail
-        console.log(`${TableWC.tag}.on_click_td - clicks: ${clicks} - event:`, event)
+        // console.log(`${TableWC.tag}.on_click_td - clicks: ${clicks} - event:`, event)
 
         let refTR = event.target.parentElement
+        let refTD = event.target
+        let rowData = this.dataRows[refTR.sectionRowIndex]
+        let column = this.dataCols[refTD.cellIndex].field
+        let customDetail = {
+            clicks: clicks,
+            refTR: refTR,
+            refTD: refTD,
+            rowData: rowData,
+            cellData: this.dataRows[refTR.sectionRowIndex][column],
+            isRowMarked: null,
+            isRowSelected: null,
+            isRowActivated: null
+        }
+        let customEvent = new CustomEvent(EVENT_TABLEWC_CELL_SELECTED, {
+            detail: customDetail,
+            composed: true
+        })
+
         if (clicks === 1 && this.clicksToHandle.find(clickNum => clickNum === clicks)) {
             this.markedRow = this.renderHighlightRow('marked-row', this.markedRow, refTR)
+            customDetail.isRowMarked = this.markedRow !== null
+            customDetail.isRowSelected = this.selectedRow !== null
+            customDetail.isRowActivated = this.activatedRow !== null
+            this.dispatchEvent(customEvent)
         } else if (clicks === 2 && this.clicksToHandle.find(clickNum => clickNum === clicks)) {
             this.selectedRow = this.renderHighlightRow('selected-row', this.selectedRow, refTR)
+            customDetail.isRowMarked = this.markedRow !== null
+            customDetail.isRowSelected = this.selectedRow !== null
+            customDetail.isRowActivated = this.activatedRow !== null
+            this.dispatchEvent(customEvent)
         } else if (clicks === 3 && this.clicksToHandle.find(clickNum => clickNum === clicks)) {
             this.activatedRow = this.renderHighlightRow('activated-row', this.activatedRow, refTR)
+            customDetail.isRowMarked = this.markedRow !== null
+            customDetail.isRowSelected = this.selectedRow !== null
+            customDetail.isRowActivated = this.activatedRow !== null
+            this.dispatchEvent(customEvent)
         }
     }
     

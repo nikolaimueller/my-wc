@@ -11,3 +11,52 @@ pre {
     color: white;
     background-color: #00000080;
 }
+
+.table-detail-flex-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.table-flex-item {
+    padding: 1rem;
+}
+
+.detail-flex-item {
+    padding: 1rem;
+}
+
+div.detail-row {
+    margin: 1rem;
+}
+
+label {
+    display: inline-block;
+    min-width: 6rem;
+}
+
+button {
+    color: #ffffffd0;
+    border: 1px solid grey;
+    border-radius: 4px;
+    padding: 0.25rem 2rem 0.25rem 2rem;
+    font-weight: bold;
+    min-width: 9rem;
+}
+.button-save {
+    background-color: #20a02b;
+}
+.button-add {
+    background-color: #2040a0;
+}
+
+button:hover {
+    border-color: white;
+    color: white;
+}
+button:disabled {
+    cursor: no-drop;
+    background-color: #80808080;
+}
+button:hover:disabled {
+    border-color: silver;
+}
