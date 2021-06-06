@@ -1,7 +1,10 @@
 // Component: TableView
 // See:   https://developer.mozilla.org/en-US/docs/Web/Web_Components
 
-import TableWC, { ATTRIBUTE_CLICKS_TO_HANDLE } from '../vendor/my-wc/components/table-wc/TableWC.js'
+import TableWC, { 
+    ATTRIBUTE_CLICKS_TO_HANDLE, 
+    EVENT_TABLEWC_CELL_SELECTED 
+} from '../vendor/my-wc/components/table-wc/TableWC.js'
 
 const MOCK_DATA = {
     cols: [
@@ -16,15 +19,53 @@ const MOCK_DATA = {
     ]
 }
 
-const ID_UL = 'ID_UL'
+const ID_TABLE_CONTAINER = 'ID_TABLE_CONTAINER'
+const ID_DETAILS_CONTAINER = 'ID_DETAILS_CONTAINER'
+
+const ID_INPUT_ID = 'ID_INPUT_ID'
+const ID_INPUT_FIRST_NAME = 'ID_INPUT_FIRST_NAME'
+const ID_INPUT_LAST_NAME = 'ID_INPUT_LAST_NAME'
+
+const ID_BUTTON_SAVE = 'ID_BUTTON_SAVE'
+const ID_BUTTON_ADD = 'ID_BUTTON_ADD'
+
+const ID_TABLE_WC2 = 'ID_TABLE_WC2'
 
 const template = document.createElement('template')
 template.innerHTML = `
 <h1>TableView</h1>
-<p>Her is a <code>TabelWC</code> ( <code>&lt;table-wc&gt;</code> ) component:</p>
-<ul id="${ID_UL}">
-    <li>You can <code>click</code> to <b>mark</b> a row or a column</li>
-    <li>You can <code>dbl-click</code> to <b>select</b> a row or a column</li>
+<div class="table-detail-flex-container">
+
+    <div id="${ID_TABLE_CONTAINER}" class="table-flex-item">
+        <p>This is a <code>TabelWC</code> ( <code>&lt;table-wc&gt;</code> ) component:</p>
+        <${TableWC.tag} id="${ID_TABLE_WC2}" ${ATTRIBUTE_CLICKS_TO_HANDLE}="1, 2, 3"></${TableWC.tag}>
+    </div>
+
+    <div id="${ID_DETAILS_CONTAINER}" class="detail-flex-item">
+        <div class="detail-row"><b>Details (Selected Row):</b></div>
+        <div class="detail-row">
+            <label for="${ID_INPUT_ID}">id:</label><input id="${ID_INPUT_ID}" type="text" disabled />
+        </div>
+        <div class="detail-row">
+            <label for="${ID_INPUT_FIRST_NAME}">First Name:</label><input id="${ID_INPUT_FIRST_NAME}" type="text"/>
+        </div>
+        <div class="detail-row">
+            <label for="${ID_INPUT_LAST_NAME}">Last Name:</label><input id="${ID_INPUT_LAST_NAME}" type="text"/>
+        </div>
+        <div class="detail-row">
+            <label for="${ID_BUTTON_SAVE}"> &nbsp; </label><button id="${ID_BUTTON_SAVE}" class="button-save" disabled>Save</button>
+        </div>
+        <div class="detail-row">
+            <label for="${ID_BUTTON_ADD}"> &nbsp; </label><button id="${ID_BUTTON_ADD}" class="button-add">Add</button>
+        </div>
+    </div>
+
+</div>
+
+<ul>
+    <li>You can <code>click</code> once to <b>mark</b> a row or a column</li>
+    <li>You can <code>click</code> twice to <b>select</b> a row or a column</li>
+    <li>You can <code>click</code> 3 times to <b>activate</b> a row or a column</li>
     <li>Table's content is provisioned via <code>setDataColumns(MOCK_DATA.cols)</code> and <code>setDataRows(MOCK_DATA.rows)</code> -
         the mock-data used here looks like this:
         <br>
@@ -68,14 +109,27 @@ export default class TableView extends HTMLElement {
 
         // Add template content
         shadow.appendChild(template.content.cloneNode(true))
+        
+        this.refTableContainer = shadow.getElementById(ID_TABLE_CONTAINER)
+        this.refDetailsContainer = shadow.getElementById(ID_DETAILS_CONTAINER)
+        this.refInputId = shadow.getElementById(ID_INPUT_ID)
+        this.refInputFirstName = shadow.getElementById(ID_INPUT_FIRST_NAME)
+        this.refInputLastName = shadow.getElementById(ID_INPUT_LAST_NAME)
+        this.refSaveButton = shadow.getElementById(ID_BUTTON_SAVE)
+        this.refAddButton = shadow.getElementById(ID_BUTTON_ADD)
 
-        this.refUL = shadow.getElementById(ID_UL)
-        this.refTableWC = document.createElement(TableWC.tag)
-        this.refTableWC.setAttribute(ATTRIBUTE_CLICKS_TO_HANDLE, '1, 2, 3')
-        shadow.insertBefore(this.refTableWC, this.refUL) // Insert <table-wc> before the <ul>.
+        // * Add the TableWC component - this is the programmatical way to construct a TableWC component.
+        //this.refTableWC = document.createElement(TableWC.tag)
+        //this.refTableWC.setAttribute(ATTRIBUTE_CLICKS_TO_HANDLE, '1, 2, 3')
+        //this.refTableContainer.appendChild(this.refTableWC)
+
+        // * Refer to the TableWC component from template - this is the declarative way to construct a TabelWC component.
+        this.refTableWC2 = shadow.getElementById(ID_TABLE_WC2)
 
         // Bind event-handler
-        this.on_click_table_wc = this.on_click_table_wc.bind(this)
+        this.on_tablewc_cell_selected = this.on_tablewc_cell_selected.bind(this)
+        this.on_click_save_button = this.on_click_save_button.bind(this)
+        this.on_click_add_button = this.on_click_add_button.bind(this)
     }
 
     // *** Livecycle callbacks  ***
@@ -88,22 +142,28 @@ export default class TableView extends HTMLElement {
             // Provision <table-wc> columns und data.
             this.fetchDataForTable()
             .then(tableData => {
-                this.refTableWC.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
-                this.refTableWC.setDataRows(tableData.rows /* MOCK_DATA.rows */) // This triggers <table-wc>'s rendering
+                //this.refTableWC.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
+                //this.refTableWC.setDataRows(tableData.rows /* MOCK_DATA.rows */) // This triggers <table-wc>'s rendering
+                //
+                this.refTableWC2.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
+                this.refTableWC2.setDataRows(tableData.rows /* MOCK_DATA.rows */) // This triggers <table-wc>'s rendering
             })
             .catch(err => {
                 console.exception(`${TableView.tag}.connectedCallback - provisioning <table-wc> failed - err:`, err)
             })
             
             // Add event handler for <table-wc>'s click event.
-            this.refTableWC.addEventListener('click', this.on_click_table_wc)
+            this.addEventListener(EVENT_TABLEWC_CELL_SELECTED, this.on_tablewc_cell_selected)
+            this.refSaveButton.addEventListener('click', this.on_click_save_button)
+            this.refAddButton.addEventListener('click', this.on_click_add_button)
         }
     }
 
     disconnectedCallback() {
         // Invoked each time the custom element is disconnected from the document's DOM.
-        // console.log(`${TableView.tag}.disconnectedCallback(): NOT IMPLEMENTED !!`)
-        this.refTableWC.removeEventListener('click', this.on_click_table_wc)
+        this.removeEventListener(EVENT_TABLEWC_CELL_SELECTED, this.on_tablewc_cell_selected)
+        this.refSaveButton.removeEventListener('click', this.on_click_save_button)
+        this.refAddButton.removeEventListener('click', this.on_click_add_button)
     }
 
     adoptedCallback() {
@@ -134,15 +194,80 @@ export default class TableView extends HTMLElement {
 
     // *** Event handler ***
 
-    on_click_table_wc(event) {
-        let clicks = event.detail
-        if (clicks === 1) {
-            console.log(`${TableView.tag}.on_click_table_wc <table-wc> handler - 'single-click' - event:`, event)
-        } else if (clicks === 2) {
-            console.log(`${TableView.tag}.on_click_table_wc <table-wc> handler - 'double-click' - event:`, event)
-        } else if (clicks === 3) {
-            console.log(`${TableView.tag}.on_click_table_wc <table-wc> handler - 'triple-click' - event:`, event)
+    on_tablewc_cell_selected(event) {
+        if (event.detail.clicks === 2) {
+            console.log(`${TableView.tag}.on_tablewc_cell_selected: clicks: ${event.detail.clicks} - event:`, event)
+
+            if (event.detail.isRowSelected === true) {
+                // Provision Detail inputs
+                this.refInputId.value = event.detail.rowData.id
+                this.refInputFirstName.value = event.detail.rowData.firstName
+                this.refInputLastName.value = event.detail.rowData.lastName
+
+                this.refSaveButton.removeAttribute('disabled')
+                this.refAddButton.setAttribute('disabled', 'disabled')
+            } else {
+                // Clear Detail inputs
+                this.refInputId.value = 0
+                this.refInputFirstName.value = ''
+                this.refInputLastName.value = ''
+
+                this.refSaveButton.setAttribute('disabled', 'disabled')
+                this.refAddButton.removeAttribute('disabled')
+            }
         }
+    }
+
+    on_click_save_button(event) {
+        console.log(`${TableView.tag}.on_click_save_button: event:`, event)
+        
+        // Emulate storing changed data 
+        let id = Number(this.refInputId.value)
+        let dataRow = MOCK_DATA.rows.find(item => item.id === id)
+        if (dataRow) {
+            dataRow.firstName = this.refInputFirstName.value
+            dataRow.lastName = this.refInputLastName.value
+        }
+        
+        // this.refTableWC.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
+        this.refTableWC2.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
+
+        // Clear Detail inputs
+        this.refInputId.value = 0
+        this.refInputFirstName.value = ''
+        this.refInputLastName.value = ''
+
+        this.refSaveButton.setAttribute('disabled', 'disabled')
+        this.refAddButton.removeAttribute('disabled')
+    }
+
+    on_click_add_button(event) {
+        console.log(`${TableView.tag}.on_click_save_button: event:`, event)
+
+        // Calc new id
+        let lastRow = 0
+        MOCK_DATA.rows.forEach(item => {
+            if (item.id > lastRow) {
+                lastRow = item.id
+            }
+        })
+        lastRow = lastRow + 123
+
+        // Create new row's data item
+        let newRowData = {
+            id: lastRow,
+            firstName: '',
+            lastName: '',
+            title: `New User [${lastRow}]`
+        }
+
+        // Add new row's data item to mock-data
+        MOCK_DATA.rows.push(newRowData)
+        // this.refTableWC.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
+        this.refTableWC2.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
+
+        this.refSaveButton.setAttribute('disabled', 'disabled')
+        this.refAddButton.setAttribute('disabled', 'disabled')
     }
 }
 // Register custom element.
