@@ -12,6 +12,7 @@ __index:__
     + [Build the example](#Build-the-example)
     + [How routing works in the example](#How-routing-works-in-the-example)
     + [Table-WC Component](#Table-WC-Component)
+    + [WC-Select-Box Component](#WC-Select-Box-Component)
 
 
 *__HINT: This is in a very early stage of development!__*
@@ -44,6 +45,7 @@ Open your favorite shell, navigate into your project folder and run:
 * theme-manager (module, not a component):
     + theme-manager ``components/theme-manager/theme-manager.js`` - handle CSS themes
 * table-wc `components/table-wc/Table.wc` - simple table component
+* wc-select-box: ``components/wc-select-box/WCSelectBox.js`` - data driven &lt;select&gt; element
 
 ^ [top](#my-wc)
 
@@ -239,15 +241,33 @@ document.body.addEventListener(EVENT_USER_LOGGED_IN, onUserLoggedIn.bind(mainApp
 Example sources:
 
 * `examples/views/TableView.js` - example containing a TableWC component
-* `examples/views/TableView.js` - example containing a TableWC component
+* `examples/views/TableView.css` - CSS for example TableWC component
 * `themes/dark-theme/vendor/m-wc/components/table-wc/TableWC.css`
-* `themes/dark-theme/vendor/m-wc/components/table-wc/TableWC.css`
+* `themes/light-theme/vendor/m-wc/components/table-wc/TableWC.css`
 
 
 ^ [top](#my-wc)
 
 ---
 
+## WC-Select-Box Component
+
+Example Sources:
+
+* Example View
+    + `examples/views/SelectView/SelectView.js`
+    + `examples/views/SelectView/SelectView.css`
+* Example View themes:
+    + `themes/dark-theme/examples/views/select-view/SelectView.css`
+    + `themes/light-theme/examples/views/select-view/SelectView.css`
+* WC-Select-Box themes:
+    + `themes/dark-theme/examples/vendor/m-wc/components/wc-select-box/WCSelectBox.css`
+    + `themes/light-theme/examples/vendor/m-wc/components/wc-select-box/WCSelectBox.css`
+
+
+^ [top](#my-wc)
+
+---
 
 ## *My developing hints*
 

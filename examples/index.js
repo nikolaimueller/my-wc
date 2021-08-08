@@ -10,6 +10,7 @@ import {
 // Import "view" components.
 import HomeView from './views/HomeView.js'
 import TableView from './views/TableView.js'
+import SelectView from './views/select-view/SelectView.js'
 import AboutView from './views/AboutView.js'
 import LoginView, { EVENT_USER_LOGGED_IN } from './views/LoginView.js'
 
@@ -26,6 +27,7 @@ setOptions({prefix: 'vendor'})
 register({ default: true, url: '/home', component: HomeView })
 register({ url: '/about', component: AboutView })
 register({ url: '/table', component: TableView })
+register({ url: '/select', component: SelectView })
 register({ url: '/login', component: LoginView })
 
 // Add a intercept-routing callback - before switching route.

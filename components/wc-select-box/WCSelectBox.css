@@ -1,0 +1,20 @@
+/* Component WCSelectBox */
+:host {
+    display: inline-block;
+}
+/*
+select {
+    background-color: deeppink;
+}
+
+option {
+    background-color: darkseagreen;
+    color: darkred;
+}
+
+optgroup {
+    background-color: burlywood;
+    color:orangered;
+    font-style: normal;
+}
+*/

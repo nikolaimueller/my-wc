@@ -1,0 +1,13 @@
+/* dark-theme - WCSelectBox */
+select {
+    background-color: #ffe04080;
+    color: #602000;;
+}
+option {
+    background-color: darkseagreen;
+    color: darkred;
+}
+optgroup {
+    background-color: burlywood;
+    color:darkred;
+}

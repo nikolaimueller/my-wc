@@ -1,0 +1,14 @@
+/* light-theme - WCSelectBox */
+select {
+    background-color: rgba(255, 20, 145, 0.288);
+}
+
+option {
+    background-color: rgba(55, 165, 55, 0.445);
+    color: rgb(15, 39, 119);
+}
+
+optgroup {
+    background-color: rgba(222, 184, 135, 0.377);
+    color:rgb(50, 3, 88);
+}

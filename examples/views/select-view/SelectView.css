@@ -1,0 +1,23 @@
+/* Component: SelectView */
+:host {
+    /* Selects the shadow host of the shadow DOM containing the CSS it is used inside. */
+    display: block;
+    margin: 1rem;
+}
+wc-select-box {
+    display: block;
+    margin: 1rem;
+}
+div {
+    padding: 1rem;
+}
+label {
+    font-weight: bolder;
+    line-height: 1.5rem;
+}
+select {
+    margin: 0.5rem;
+}
+span.result {
+    font-family: monospace;
+}
