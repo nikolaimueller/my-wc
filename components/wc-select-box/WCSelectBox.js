@@ -142,14 +142,14 @@ export default class WCSelectBox extends HTMLElement {
                     item.children.forEach(child => {
                         let option = document.createElement('option')
                         option.value = child.id
-                        option.textContent = `(${child.id}) ${child.text}`
+                        option.textContent = child.text.toString()
                         refOptGroup.appendChild(option)
                     })
                     this.refSelectElement.appendChild(refOptGroup)
                 } else {
                     let option = document.createElement('option')
                     option.value = item.id
-                    option.textContent = `(${item.id}) ${item.text}`
+                    option.textContent = item.text.toString()
                     this.refSelectElement.appendChild(option)
                 }
             })
