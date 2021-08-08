@@ -30,8 +30,8 @@ export function setThemeBaseLink(baseThemeLink, dropPaths) {
 }
 
 export function applyTheme(documentFragment, stylesheetLink) {    
-    if (documentFragment instanceof DocumentFragment === false)  {
-        console.warn('ThemeManager.applyTheme: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment")');
+    if (documentFragment instanceof DocumentFragment === false && documentFragment instanceof HTMLBodyElement === false)  {
+        console.warn('ThemeManager.applyTheme: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment or HTMLBodyElement")');
         return
     }
     if (_baseThemeLink.length === 0) {
@@ -44,7 +44,7 @@ export function applyTheme(documentFragment, stylesheetLink) {
     }
     
     let stylesheetLinkUrl = new URL(stylesheetLink)
-    let stylesheetLinkHref = concatPath(_baseThemeLink, stylesheetLinkUrl.pathname)
+    let stylesheetLinkHref = stylesheetLinkUrl.origin + concatPath(_baseThemeLink, stylesheetLinkUrl.pathname)
     
     let linkTheme = document.createElement('link');
     linkTheme.setAttribute('rel', 'stylesheet');
@@ -61,10 +61,14 @@ export function switchTheme(rootElement, oldBaseThemeLink, newBaseThemeLink) {
     let element;  // current element
     let children; // Array of children (child-elements)
 
-    if (rootElement.shadowRoot !== null) {
+    if (rootElement.shadowRoot !== null || rootElement instanceof HTMLBodyElement === true) {
         // console.log(`ThemeManager.switchTheme: rootElement - has shadowRoot - localName: ${rootElement.localName}`);
         element = rootElement
-        children = Array.from(element.shadowRoot.children)
+        if (rootElement.shadowRoot !== null) {
+            children = Array.from(element.shadowRoot.children)
+        } else if (rootElement instanceof HTMLBodyElement === true) {
+            children = Array.from(rootElement.children)
+        }
         
         // Get the old theme element
         let themeLink = children.find(node => {

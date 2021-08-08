@@ -1,0 +1,13 @@
+/* dark-theme - /styles/index.css */
+:root {
+    --white: #fff;
+    --silver: #bbb;
+    --antrazit: #333;
+    --gray-blue: #607080;
+    --red: #e00056;
+    --green:  #42b993;
+    --orange: #fcaa58;
+
+    --link-color:   var(--orange);
+    --link-hover-color: var(--red);
+}

@@ -12,6 +12,7 @@ template.innerHTML = `
 <div class="header">Menu:&nbsp;
     <${RouteLink.tag} title="Home" url="/home"></${RouteLink.tag}> | 
     <${RouteLink.tag} title="Table" url="/table"></${RouteLink.tag}> |
+    <${RouteLink.tag} title="Select" url="/select"></${RouteLink.tag}> |
     <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
     &nbsp; &nbsp; Select Theme: 
     <select id="${ID_THEME_SELECT}">
@@ -49,7 +50,11 @@ export default class MainApp extends HTMLElement {
         // this._theme = light_theme_Base_Path // Uncomment one of thiese 2 lines.
         setThemeBaseLink(this._theme)
 
-        // Apply theme.
+        // Apply document wide theme - base css.
+        let bodyPathname = document.location.pathname.replace('index.html', 'styles/index.css')
+        applyTheme(document.body, `${document.location.origin}${bodyPathname}`);
+
+        // Applay component's theme.
         applyTheme(shadow, MainApp.styleSheet_url);
 
         // Add template content
@@ -87,7 +92,8 @@ export default class MainApp extends HTMLElement {
 
         let oldBaseThemeLink = '' + this._theme
         let newBaseThemeLink = refThemeSelect.value
-        switchTheme(this, oldBaseThemeLink, newBaseThemeLink)
+        // $$$ switchTheme(this, oldBaseThemeLink, newBaseThemeLink)
+        switchTheme(document.body, oldBaseThemeLink, newBaseThemeLink)
         this._theme = newBaseThemeLink
     }
 }
