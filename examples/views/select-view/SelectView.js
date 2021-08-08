@@ -6,14 +6,14 @@ import WCSelectBox, { EVENT_MYWC_SELECTBOX_SELECTED } from "../../vendor/my-wc/c
 const MOCK_DATA = [
     { id: 4, text: 'Other things'},
     { text: 'Drivers:', children: [
-        { id: 12, text: 'Hans Mayer' },
-        { id: 45, text: 'Kasper Hauser' },
-        { id: 72, text: 'Karin Neumann'},
+        { id: 12, text: '(12) Hans Mayer' },
+        { id: 45, text: '(45) Kasper Hauser' },
+        { id: 72, text: '(72) Karin Neumann'},
     ] },
     { text: 'Cars', children: [
-        { id: 7, text: 'BMW' },
-        { id: 9, text: 'Audi' },
-        { id: 17, text: 'VW' },
+        { id: 7, text: '(7) BMW' },
+        { id: 9, text: '(9) Audi' },
+        { id: 17, text: '(17) VW' },
     ] }
 ]
 
