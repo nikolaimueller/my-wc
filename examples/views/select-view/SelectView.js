@@ -4,9 +4,9 @@ import {applyTheme} from '../../vendor/my-wc/components/theme-manager/theme-mana
 import WCSelectBox, { EVENT_MYWC_SELECTBOX_SELECTED } from "../../vendor/my-wc/components/wc-select-box/WCSelectBox.js";
 
 const MOCK_DATA = [
-    { id: 4, text: 'Other things'},
+    { id: 4, text: '(4) Other things'},
     { text: 'Drivers:', children: [
-        { id: 12, text: '(12) Hans Mayer' },
+        { id: 12, text: '(12) Hans Mayer' /* , selected: true */ },
         { id: 45, text: '(45) Kasper Hauser' },
         { id: 72, text: '(72) Karin Neumann'},
     ] },
@@ -34,6 +34,10 @@ see: <a href="https://github.com/nikolaimueller/my-wc/wiki/Component-WCSelectBox
 <div>
     <label for="${ID_SELECT_BOX}">WC-Select-Box:
         <br>
+        <small>Pre-selected id: [4]
+        <br>
+        Select id:72 programmatically after 3 secconds</small>
+        <br>
         <${WCSelectBox.tag} id="${ID_SELECT_BOX}"
             empty-option="clear"
             empty-option-text="--Please select one--"
@@ -44,6 +48,10 @@ see: <a href="https://github.com/nikolaimueller/my-wc/wiki/Component-WCSelectBox
 </div>
 <div>
     <label for="${ID_SELECT_BOX_MULTI}">WC-Select-Box Multi/4:
+        <br>
+        <small>Pre-selected ids: [4,7]
+        <br>
+        Select id:72 programmatically after 5 secconds</small>
         <br>
         <${WCSelectBox.tag} id="${ID_SELECT_BOX_MULTI}"
             multiple="true"
@@ -108,13 +116,21 @@ export default class SelectView extends HTMLElement {
             let dummyFetch = Promise.resolve(MOCK_DATA)
             .then(data => {
                 console.log(`${SelectView.tag}.connectedCallback: dummy fetch MOCK_DATA:`, data)
-                this.refSelectBox.setData(data)
+                this.refSelectBox.setData(data, [4])
                 this.refSelectBox.addEventListener(EVENT_MYWC_SELECTBOX_SELECTED, this.on_mywc_selectbox_selected)
                 // 
-                this.refSelectBoxMulti.setData(data)
+                this.refSelectBoxMulti.setData(data, [4,7])
                 this.refSelectBoxMulti.addEventListener(EVENT_MYWC_SELECTBOX_SELECTED, this.on_mywc_selectboxmulti_selected)
                 //
                 this.refPreMockData.textContent = JSON.stringify(MOCK_DATA, null, 4)
+
+                // Emulate some user action after 3 and 5 secconds.
+                setTimeout(() => {
+                    this.refSelectBox.setSelected(72)
+                }, 3000)
+                setTimeout(() => {
+                    this.refSelectBoxMulti.setSelected(72)
+                }, 5000)
             })
             .catch(err => console.error(err) )
         }

@@ -15,6 +15,7 @@ export default class WCSelectBox extends HTMLElement {
         super()
 
         this.data = null
+        this.selectedIds = []
 
         this.attr_multiple = null
         this.attr_size = null 
@@ -38,9 +39,26 @@ export default class WCSelectBox extends HTMLElement {
         this.on_input_select = this.on_input_select.bind(this)
     }
 
-    setData(data) {
+    setData(data, selectedIds=null) {
         this.data = data
+
+        if (Array.isArray(selectedIds)) {
+            this.selectedIds = selectedIds
+        }
+
         this.render()
+    }
+
+    setSelected(id) {
+        let isMatchId = this.equalsIds(id, this.selectedIds)
+        if (!isMatchId) {
+            this.selectedIds.push(id)
+            Array.from(this.refSelectElement.options).forEach(option => {
+                if (this.equalsIds(option.value, [id.toString()]) === true) {
+                    option.setAttribute('selected', true)
+                }
+            })
+        }
     }
 
     // *** Livecycle callbacks  ***
@@ -88,6 +106,26 @@ export default class WCSelectBox extends HTMLElement {
         }
     }
 
+    equalsIds(id1, ids) {
+        if (!Array.isArray(ids)) {
+            return false
+        }
+
+        let result = false
+        for (let i = 0; i < ids.length; i++) {
+            let id2 = ids[i]
+            if (typeof id1 === 'number' || typeof id1 === 'string') {
+                result = id1 === id2
+            } else if (id1.low && id2.low && id1.high && id2.high) {
+                result = (id1.low === id2.low && id1.high === id2.high)
+            }
+            if (result === true) {
+                break
+            }
+        }
+        return result
+    }
+
     // *** Render ***
 
     render() {
@@ -121,7 +159,9 @@ export default class WCSelectBox extends HTMLElement {
         // handle attr empty-option
         if (this.attr_empty_option === 'true' || this.attr_empty_option === 'clear') {
             let emptyOption = document.createElement('option')
-            emptyOption.setAttribute('selected', true)
+            if (this.selectedIds.length === 0) {
+                emptyOption.setAttribute('selected', true)
+            }
             if (this.attr_empty_option === 'true') {
                 emptyOption.setAttribute('disabled', true)
             } else if (this.attr_empty_option === 'clear') {
@@ -143,6 +183,9 @@ export default class WCSelectBox extends HTMLElement {
                         let option = document.createElement('option')
                         option.value = child.id
                         option.textContent = child.text.toString()
+                        if ((child.selected && child.selected === true) || this.equalsIds(child.id, this.selectedIds)) {
+                            option.setAttribute('selected', true)
+                        }
                         refOptGroup.appendChild(option)
                     })
                     this.refSelectElement.appendChild(refOptGroup)
@@ -150,6 +193,9 @@ export default class WCSelectBox extends HTMLElement {
                     let option = document.createElement('option')
                     option.value = item.id
                     option.textContent = item.text.toString()
+                    if ((item.selected && item.selected === true) || this.equalsIds(item.id, this.selectedIds)) {
+                        option.setAttribute('selected', true)
+                    }
                     this.refSelectElement.appendChild(option)
                 }
             })
