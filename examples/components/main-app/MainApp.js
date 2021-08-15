@@ -7,6 +7,8 @@ const ID_THEME_SELECT = 'id-theme-select'
 const light_theme_Base_Path = '/examples/themes/light-theme'
 const dark_theme_Base_Path = '/examples/themes/dark-theme'
 
+let privatRouteLinkUrl = import.meta.url.replace('MainApp.js', 'private-RouteLink.css')
+
 const template = document.createElement('template');
 template.innerHTML = `
 <div class="header">Menu:&nbsp;
@@ -14,6 +16,7 @@ template.innerHTML = `
     <${RouteLink.tag} title="Table" url="/table"></${RouteLink.tag}> |
     <${RouteLink.tag} title="Select" url="/select"></${RouteLink.tag}> |
     <${RouteLink.tag} title="About" url="/about"></${RouteLink.tag}> |
+    <${RouteLink.tag} title="Style Sheet" url="/style-sheet" style-sheet="${privatRouteLinkUrl}"></${RouteLink.tag}> |
     &nbsp; &nbsp; Select Theme: 
     <select id="${ID_THEME_SELECT}">
         <option disabled value="" selected>Please select one</option>

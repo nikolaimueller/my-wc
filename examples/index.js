@@ -13,6 +13,7 @@ import TableView from './views/TableView.js'
 import SelectView from './views/select-view/SelectView.js'
 import AboutView from './views/AboutView.js'
 import LoginView, { EVENT_USER_LOGGED_IN } from './views/LoginView.js'
+import StyleSheetView from './views/style-sheet-view/StyleSheetView.js'
 
 // Current User: demo for routing interception:
 let currentUser = {
@@ -29,6 +30,7 @@ register({ url: '/about', component: AboutView })
 register({ url: '/table', component: TableView })
 register({ url: '/select', component: SelectView })
 register({ url: '/login', component: LoginView })
+register({ url: '/style-sheet', component: StyleSheetView })
 
 // Add a intercept-routing callback - before switching route.
 // Switching can be redirected by returning a registered routing url.
@@ -52,7 +54,7 @@ registerAfterGlobalRoute((oldUrl, newUrl, newView)  => {
 })
 
 // *** MAIN APP ***
-import MainApp from './components/MainApp/MainApp.js'
+import MainApp from './components/main-app/MainApp.js'
 
 function onUserLoggedIn(event) {
     currentUser.account = event.detail.account
