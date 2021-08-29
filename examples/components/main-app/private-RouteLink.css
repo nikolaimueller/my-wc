@@ -1,0 +1,13 @@
+/* private-RouteLink.css */
+span {
+    border: 1px solid greenyellow;
+    padding: 2px;
+}
+span.activated {
+    color: #ff0000b0;
+    font-weight: bold;
+    border-color: red;
+}
+span:hover {
+    color: red;
+}

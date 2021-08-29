@@ -1,4 +1,7 @@
 // Component: DialogComponent
+import { 
+    applyTheme, 
+    applyStyleSheet as themeManager_applyStyleSheet } from '../theme-manager/theme-manager.js' 
 
 // *** Singleton instance. ***
 let _refDialogInstance = null
@@ -70,7 +73,7 @@ template.innerHTML = `
 
 export default class DialogComponent extends HTMLElement {
     static get tag() { return 'dialog-component' }
-    // static get observedAttributes() { return ['exampleattr'] }
+    static get observedAttributes() { return ['style-sheet'] }
     static get styleSheet_url() {
         if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
         if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
@@ -95,6 +98,9 @@ export default class DialogComponent extends HTMLElement {
         this.refLinkStyle.setAttribute('href', DialogComponent.styleSheet_url)
         shadow.appendChild(this.refLinkStyle)
 
+        // Applay theme
+        applyTheme(shadow, RouteLink.styleSheet_url);
+
         // Add template content
         shadow.appendChild(template.content.cloneNode(true))
 
@@ -106,6 +112,10 @@ export default class DialogComponent extends HTMLElement {
         this.on_keyup_body = this.on_keyup_body.bind(this)
         // this.onKeyupEscape = this.onKeyupEscape.bind(this)
         this.on_click_HeaderCloseButton = this.on_click_HeaderCloseButton.bind(this)
+    }
+    
+    applyStyleSheet(url) {
+        themeManager_applyStyleSheet(this, url)
     }
 
     // *** Livecycle callbacks  ***
@@ -136,12 +146,12 @@ export default class DialogComponent extends HTMLElement {
 
     attributeChangedCallback(name, oldValue, newValue) {
         // Invoked each time one of the custom element's attributes is added, removed, or changed.
-        console.log(`${DialogComponent.tag}.attributeChangedCallback(): NOT IMPLEMENTED !!`)
-        // switch (name) {
-        // 	case 'exampleattr':
-        // 		// Do something meaningfull with your new attribute value.
-        // 		break
-        // }
+        // console.log(`${DialogComponent.tag}.attributeChangedCallback(): NOT IMPLEMENTED !!`)
+        switch (name) {
+            case 'style-sheet':
+                themeManager_applyStyleSheet(this.shadowRoot, newValue)
+                break
+        }
     }
 
     // Event handler

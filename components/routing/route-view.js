@@ -8,10 +8,13 @@ import {
     interceptAfter,
     switchRoute
 } from './routing.js'
-import { applyTheme } from '../theme-manager/theme-manager.js'
+import {
+    applyTheme, 
+    applyStyleSheet as themeManager_applyStyleSheet } from '../theme-manager/theme-manager.js'
 
 export default class RouteView extends HTMLElement {
     static get tag() { return 'route-view' }
+    static get observedAttributes() { return ['style-sheet'] }
     static get styleSheet_url() {
         if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
         if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
@@ -30,6 +33,10 @@ export default class RouteView extends HTMLElement {
 
         // Set a specific theme to use
         applyTheme(shadow, RouteView.styleSheet_url);
+    }
+
+    applyStyleSheet(url) {
+        themeManager_applyStyleSheet(this, url)
     }
 
     connectedCallback() {
@@ -64,6 +71,14 @@ export default class RouteView extends HTMLElement {
             switchRoute(newUrl)
         }
     }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        switch (name) {
+            case 'style-sheet':
+                themeManager_applyStyleSheet(this.shadowRoot, newValue)
+                break
+        }
+	}
 
     switchContent(currentRoute, newUrl) {
         function doSwitchContent(currentRoute, newRoute) {

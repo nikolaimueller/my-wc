@@ -1,10 +1,12 @@
 // Component: RouteLink
 import { switchRoute } from './routing.js'
-import { applyTheme } from '../theme-manager/theme-manager.js'
+import { 
+    applyTheme, 
+    applyStyleSheet as themeManager_applyStyleSheet } from '../theme-manager/theme-manager.js' 
 
 export default class RouteLink extends HTMLElement {
     static get tag() { return 'route-link' }
-    static get observedAttributes() { return ['url', 'title', 'activated', 'highlight-activated'] }
+    static get observedAttributes() { return ['url', 'title', 'activated', 'highlight-activated', 'style-sheet'] }
     static get styleSheet_url() {
         if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
         if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
@@ -34,6 +36,10 @@ export default class RouteLink extends HTMLElement {
         this.onClickHandler = this.onClickHandler.bind(this)
     }
 
+    applyStyleSheet(url) {
+        themeManager_applyStyleSheet(this, url)
+    }
+
     onClickHandler(e) {
         switchRoute(e.target.url, this)
     }
@@ -49,8 +55,8 @@ export default class RouteLink extends HTMLElement {
     }
     
 	attributeChangedCallback(name, oldValue, newValue) {
-		switch (name) {
-		    case 'title':
+        switch (name) {
+            case 'title':
                 this.refSpan.textContent = newValue
                 break
             case 'url':
@@ -71,6 +77,9 @@ export default class RouteLink extends HTMLElement {
                 break
             case 'highlight-activated':
                 // No action needed here, see 'activated' attribute.
+                break
+            case 'style-sheet':
+                themeManager_applyStyleSheet(this.shadowRoot, newValue)
                 break
         }
 	}

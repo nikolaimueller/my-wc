@@ -5,7 +5,9 @@
 // see:   https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
 // see:   https://developer.mozilla.org/en-US/docs/Web/API/TouchEvent
 
-import {applyTheme} from '../theme-manager/theme-manager.js'
+import {
+    applyTheme, 
+    applyStyleSheet as themeManager_applyStyleSheet } from '../theme-manager/theme-manager.js'
 
 /**
  * Mouse event(s) to be handled by this component: 1-click, 2-click, 3-click.
@@ -35,7 +37,7 @@ export const EVENT_TABLEWC_CELL_SELECTED = 'event-table-wc-cell-selected'
  * */
 export default class TableWC extends HTMLElement {
     static get tag() { return 'table-wc' }
-    static get observedAttributes() { return [ATTRIBUTE_CLICKS_TO_HANDLE] }
+    static get observedAttributes() { return [ATTRIBUTE_CLICKS_TO_HANDLE, 'style-sheet'] }
     static get styleSheet_url() {
         if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
         if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
@@ -79,6 +81,13 @@ export default class TableWC extends HTMLElement {
         this.on_click_td = this.on_click_td.bind(this)
     }
 
+    /**
+     * Add extra style-sheet *.css file to this component.
+     * @param {string} url - Url of the CSS resource (file) to load.
+     */
+    applyStyleSheet(url) {
+        themeManager_applyStyleSheet(this, url)
+    }
 
     /**
      * Set the definitions of columns.
@@ -175,6 +184,9 @@ export default class TableWC extends HTMLElement {
                         let dummy = this.clicksToHandle
                     })
                 }
+                break
+            case 'style-sheet':
+                themeManager_applyStyleSheet(this.shadowRoot, newValue)
                 break
         }
     }

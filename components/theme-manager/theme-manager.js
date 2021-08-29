@@ -55,6 +55,25 @@ export function applyTheme(documentFragment, stylesheetLink) {
     return result;
 }
 
+export function applyStyleSheet(documentFragment, styleSheetUrl) {
+    if (documentFragment instanceof DocumentFragment === false && documentFragment instanceof HTMLBodyElement === false)  {
+        console.warn('ThemeManager.applyStyleSheet: Error: arg "documentFragment" is of wrong prototype! (Must be "DocumentFragment or HTMLBodyElement")');
+        return
+    }
+    if (styleSheetUrl.length < 5 || !styleSheetUrl.endsWith('.css')) {
+        console.warn(`ThemeManager.applyStyleSheet: Error: "styleSheetUrl" ("${styleSheetUrl}") has invallid value!`);
+        return
+    }
+    
+    let linkStyleSheet = document.createElement('link');
+    linkStyleSheet.setAttribute('rel', 'stylesheet');
+    linkStyleSheet.setAttribute('href', styleSheetUrl);
+    linkStyleSheet.setAttribute('name', 'private-style-sheet');
+    let result = documentFragment.appendChild(linkStyleSheet);
+
+    return result;
+}
+
 export function switchTheme(rootElement, oldBaseThemeLink, newBaseThemeLink) {
     // console.log(`ThemeManager.switchTheme - oldBaseThemeLink: ${oldBaseThemeLink} - newBaseThemeLink: ${newBaseThemeLink} - rootElement`, rootElement);
 

@@ -1,0 +1,4 @@
+/* StyleSheetView: dark-theme */
+a {
+    color: var(--link-color);
+}

@@ -1,11 +1,13 @@
 // Component: WCSelectBox
-import { applyTheme } from '../theme-manager/theme-manager.js'
+import {
+    applyTheme, 
+    applyStyleSheet as themeManager_applyStyleSheet } from '../theme-manager/theme-manager.js'
 
 export const EVENT_MYWC_SELECTBOX_SELECTED = 'mywc-select-box-selected'
 
 export default class WCSelectBox extends HTMLElement {
     static get tag() { return 'wc-select-box' }
-    static get observedAttributes() { return ['multiple', 'size', 'empty-option', 'empty-option-text', 'empty-option-clear-text'] }
+    static get observedAttributes() { return ['multiple', 'size', 'empty-option', 'empty-option-text', 'empty-option-clear-text', 'style-sheet'] }
     static get styleSheet_url() {
         if (import.meta.url.endsWith('.js'))  { return import.meta.url.replace('.js',  '.css') }
         if (import.meta.url.endsWith('.mjs')) { return import.meta.url.replace('.mjs', '.css') }
@@ -37,6 +39,10 @@ export default class WCSelectBox extends HTMLElement {
         this.refRenderPanel = null
 
         this.on_input_select = this.on_input_select.bind(this)
+    }
+    
+    applyStyleSheet(url) {
+        themeManager_applyStyleSheet(this, url)
     }
 
     setData(data, selectedIds=null) {
@@ -102,6 +108,9 @@ export default class WCSelectBox extends HTMLElement {
                 break
             case 'empty-option-clear-text':
                 this.attr_empty_option_clear_text = newValue
+                break
+            case 'style-sheet':
+                themeManager_applyStyleSheet(this.shadowRoot, newValue)
                 break
         }
     }
