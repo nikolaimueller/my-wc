@@ -48,6 +48,11 @@ button {
 .button-add {
     background-color: #2040a0;
 }
+.button-red {
+    background-color: #e00000;
+    color: #ffffff;
+    font-weight: bold;
+}
 
 button:hover {
     border-color: white;

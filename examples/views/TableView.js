@@ -1,6 +1,7 @@
 // Component: TableView
 // See:   https://developer.mozilla.org/en-US/docs/Web/Web_Components
 
+import { applyTheme, applyStyleSheet } from '../vendor/my-wc/components/theme-manager/theme-manager.js'
 import TableWC, { 
     ATTRIBUTE_CLICKS_TO_HANDLE, 
     EVENT_TABLEWC_CELL_SELECTED 
@@ -10,7 +11,8 @@ const MOCK_DATA = {
     cols: [
         {field:'id', name: 'id',         title: 'Record id (id)'},
         {field:'firstName', name: 'First Name', title: 'First Name (firstName)'},
-        {field:'lastName', name: 'Last Name',  title: 'Last Name (lastName)'}
+        {field:'lastName', name: 'Last Name',  title: 'Last Name (lastName)'},
+        {field: 'custom-action', name: 'Action', title: 'Custom rendering'}
     ],
     rows: [
         {id: 123, firstName: 'Nikolai', lastName: 'Müller',     title: 'Mr. Nikolai Müller'},
@@ -72,9 +74,10 @@ template.innerHTML = `
         <pre>
 const MOCK_DATA = {
     cols: [
-        { field: 'id',        name: 'id',         title: 'Record id (id)' },
-        { field: 'firstName', name: 'First Name', title: 'First Name (firstName)' },
-        { field: 'lastName',  name: 'Last Name',  title: 'Last Name (lastName)' }
+        { field: 'id',            name: 'id',         title: 'Record id (id)' },
+        { field: 'firstName',     name: 'First Name', title: 'First Name (firstName)' },
+        { field: 'lastName',      name: 'Last Name',  title: 'Last Name (lastName)' },
+        { field: 'custom-action', name: 'Action',     title: 'Custom rendering'}
     ],
     rows: [
         {id: 123, firstName: 'Nikolai', lastName: 'Müller',     title: 'Mr. Nikolai Müller' },
@@ -84,7 +87,8 @@ const MOCK_DATA = {
 }
         </pre>
     </li>
-    <li>You can register your own event-handlers for <code>clicke</code> and <code>dblclick</code> events emited by &lt;table-wc&gt;</li>
+    <li>You can register your own event-handlers for <code>click</code> and <code>dblclick</code> events emited by &lt;table-wc&gt;, also triple-clicks are supported</li>
+    <li>Optionally assign custom-rendering functions to header columns and data rows. So you can render special formatting or things like action buttons</li>
 </ul>
 `;
 
@@ -106,6 +110,9 @@ export default class TableView extends HTMLElement {
         this.refLinkStyle.setAttribute('rel', 'stylesheet')
         this.refLinkStyle.setAttribute('href', TableView.styleSheet_url)
         shadow.appendChild(this.refLinkStyle)
+        
+        // Apply theme
+        applyTheme(shadow, TableView.styleSheet_url)
 
         // Add template content
         shadow.appendChild(template.content.cloneNode(true))
@@ -130,6 +137,9 @@ export default class TableView extends HTMLElement {
         this.on_tablewc_cell_selected = this.on_tablewc_cell_selected.bind(this)
         this.on_click_save_button = this.on_click_save_button.bind(this)
         this.on_click_add_button = this.on_click_add_button.bind(this)
+        // Bind custom rendering functions
+        this.render_custom_column = this.render_custom_column.bind(this)
+        this.render_custom_cell = this.render_custom_cell.bind(this)
     }
 
     // *** Livecycle callbacks  ***
@@ -142,11 +152,15 @@ export default class TableView extends HTMLElement {
             // Provision <table-wc> columns und data.
             this.fetchDataForTable()
             .then(tableData => {
-                //this.refTableWC.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
-                //this.refTableWC.setDataRows(tableData.rows /* MOCK_DATA.rows */) // This triggers <table-wc>'s rendering
-                //
+                // Extend column header(s) by custom rendering.
+                const COL_INDEX_ACTION = 3
+                tableData.cols[COL_INDEX_ACTION].customRendering = this.render_custom_column
+                // Assign columns definition
                 this.refTableWC2.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
-                this.refTableWC2.setDataRows(tableData.rows /* MOCK_DATA.rows */) // This triggers <table-wc>'s rendering
+                // Extend each data-row by custom rendering.
+                tableData.rows.forEach(row => { row.customRendering = this.render_custom_cell })
+                // Assign data-rows, this triggers <table-wc>'s rendering.
+                this.refTableWC2.setDataRows(tableData.rows /* MOCK_DATA.rows */) 
             })
             .catch(err => {
                 console.exception(`${TableView.tag}.connectedCallback - provisioning <table-wc> failed - err:`, err)
@@ -258,7 +272,8 @@ export default class TableView extends HTMLElement {
             id: lastRow,
             firstName: '',
             lastName: '',
-            title: `New User [${lastRow}]`
+            title: `New User [${lastRow}]`,
+            customRendering: this.render_custom_cell // Don't forget custom-rendering function.
         }
 
         // Add new row's data item to mock-data
@@ -268,6 +283,42 @@ export default class TableView extends HTMLElement {
 
         this.refSaveButton.setAttribute('disabled', 'disabled')
         this.refAddButton.setAttribute('disabled', 'disabled')
+    }
+
+    // *** Custom Rendering ***/
+
+    render_custom_column(columnData, refRow, refCol) {
+        // custom column render funktion: (columnData, refRow, refCol) => {;}
+        console.log(`${TableView.tag}.render_custom_action(): columnData:`, columnData)
+
+        let refCustomButton = document.createElement('button')
+        refCustomButton.textContent = 'Custom Column Action'
+        
+        // $$$ TODO: refCustomButton.classList.add('button-red')
+        refCustomButton.style.backgroundColor = '#e00000'
+        refCustomButton.style.color = '#ffffff'
+        refCustomButton.style.fontWeight = 'bold'
+
+        refCustomButton.addEventListener('click', () => {
+            alert(`"Custom Column Action" button clicked!\n\nthis:\t${this}\nthis.localName:\t<${this.localName}`);
+        })
+        refCol.appendChild(refCustomButton)
+    }
+
+    render_custom_cell(rowData, cellData, refRow, refCol) {
+        console.log(`${TableView.tag}.render_custom_action(): rowData:`, rowData)
+
+        let refCustomButton = document.createElement('button')
+        refCustomButton.textContent = 'Custom Cell Action'
+
+        // $$$ TODO: refCustomButton.classList.add('button-add')
+        refCustomButton.style.backgroundColor = '#2040a0'
+        refCustomButton.style.color = '#ffffff'
+
+        refCustomButton.addEventListener('click', () => {
+            alert(`"Custom Cell Action" button clicked!\n\nrowData: ${JSON.stringify(rowData||null)}\n\nthis:\t${this}\nthis.localName:\t<${this.localName}>`); 
+        })
+        refCol.appendChild(refCustomButton)
     }
 }
 // Register custom element.

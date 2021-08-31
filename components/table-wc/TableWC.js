@@ -215,9 +215,16 @@ export default class TableWC extends HTMLElement {
 
         this.dataCols.forEach(col => {
             let refTH = document.createElement('th')
-            refTH.addEventListener('click', this.on_click_th)
-            refTH.textContent = col.name
-            if (col.title) { refTH.setAttribute('title', col.title) }
+            if (col.customRendering && typeof col.customRendering === 'function') {
+                // custom column-header render funktion: (columnData, refRow, refCol) => {;}
+                col.customRendering(col, refTR, refTH)
+            } else {
+                refTH.addEventListener('click', this.on_click_th)
+                refTH.textContent = col.name
+            }
+            if (col.title) { 
+                refTH.setAttribute('title', col.title)
+            }
             refTR.appendChild(refTH)
         });
         refTHead.appendChild(refTR)
@@ -231,9 +238,18 @@ export default class TableWC extends HTMLElement {
             let refTR = document.createElement('tr')
             this.dataCols.forEach(col => {
                 let refTD = document.createElement('td')
-                refTD.addEventListener('click', this.on_click_td)
-                refTD.textContent = row[col.field]
-                if (row.title) { refTD.setAttribute('title', row.title)}
+                
+                if (col.customRendering && row.customRendering && typeof row.customRendering === 'function') {
+                    // custom cell render funktion: (rowData, cellData, refRow, refCol) => {;}
+                    row.customRendering(row, row[col.field], refTR, refTD)
+                } else {
+                    refTD.addEventListener('click', this.on_click_td)
+                    refTD.textContent = row[col.field]
+                }
+                if (row.title) {
+                    refTD.setAttribute('title', row.title)
+                }
+
                 refTR.appendChild(refTD)
             })
             refTBody.appendChild(refTR)
