@@ -239,13 +239,23 @@ export default class TableWC extends HTMLElement {
             this.dataCols.forEach(col => {
                 let refTD = document.createElement('td')
                 
-                if (col.customRendering && row.customRendering && typeof row.customRendering === 'function') {
-                    // custom cell render funktion: (rowData, cellData, refRow, refCol) => {;}
-                    row.customRendering(row, row[col.field], refTR, refTD)
-                } else {
+                let cellValue = row[col.field]
+                let typeofCell = typeof cellValue
+                
+                if (typeofCell === 'string' || typeofCell === 'boolean') {
+                    refTD.textContent = cellValue
                     refTD.addEventListener('click', this.on_click_td)
-                    refTD.textContent = row[col.field]
+                } else if (typeofCell === 'number' || typeofCell === 'bigint') {
+                    refTD.textContent = cellValue
+                    refTD.addEventListener('click', this.on_click_td)
+                } else if (typeofCell === 'function') {
+                    // custom cell render funktion: (rowData, cellData, refRow, refCol) => {;}
+                    cellValue(row, cellValue, refTR, refTD)
+                } else if (typeofCell === 'object' && cellValue.render && cellValue.value) {
+                    // custom cell render funktion: (rowData, cellData, refRow, refCol) => {;}
+                    cellValue.render(row, cellValue.value, refTR, refTD)
                 }
+                
                 if (row.title) {
                     refTD.setAttribute('title', row.title)
                 }

@@ -9,15 +9,17 @@ import TableWC, {
 
 const MOCK_DATA = {
     cols: [
-        {field:'id', name: 'id',         title: 'Record id (id)'},
-        {field:'firstName', name: 'First Name', title: 'First Name (firstName)'},
-        {field:'lastName', name: 'Last Name',  title: 'Last Name (lastName)'},
-        {field: 'custom-action', name: 'Action', title: 'Custom rendering'}
+        {field: 'id',          name: 'id',         title: 'Record id (id)' },
+        {field: 'active',      name: 'Is Active',  title: 'Is Active' },
+        {field: 'firstName',   name: 'First Name', title: 'First Name (firstName)' },
+        {field: 'lastName',    name: 'Last Name',  title: 'Last Name (lastName)' },
+        {field: 'role',        name: 'Role',       title: 'Role Select' },
+        {field: 'action',      name: 'Action',     title: 'Custom rendering' }
     ],
     rows: [
-        {id: 123, firstName: 'Nikolai', lastName: 'Müller',     title: 'Mr. Nikolai Müller'},
-        {id: 234, firstName: 'Max',     lastName: 'Mustermann', title: 'Mr. Max Mustermann'},
-        {id: 345, firstName: 'Klara',   lastName: 'Beispiel',   title: 'Mrs. Klara Beispiel'},
+        {id: 123, active: "true",  firstName: 'Nikolai', lastName: 'Müller',     role: {value:'SysAdmin'}, title: 'Mr. Nikolai Müller', },
+        {id: 234, active: "false", firstName: 'Max',     lastName: 'Mustermann', role: {value:'User'},     title: 'Mr. Max Mustermann', },
+        {id: 345, active: "true",  firstName: 'Klara',   lastName: 'Beispiel',   role: {value:'Manager'},  title: 'Mrs. Klara Beispiel', },
     ]
 }
 
@@ -25,8 +27,10 @@ const ID_TABLE_CONTAINER = 'ID_TABLE_CONTAINER'
 const ID_DETAILS_CONTAINER = 'ID_DETAILS_CONTAINER'
 
 const ID_INPUT_ID = 'ID_INPUT_ID'
+const ID_INPUT_ACTIVE = 'ID_INPUT_ACTIVE'
 const ID_INPUT_FIRST_NAME = 'ID_INPUT_FIRST_NAME'
 const ID_INPUT_LAST_NAME = 'ID_INPUT_LAST_NAME'
+const ID_INPUT_ROLE = 'ID_INPUT_ROLE'
 
 const ID_BUTTON_SAVE = 'ID_BUTTON_SAVE'
 const ID_BUTTON_ADD = 'ID_BUTTON_ADD'
@@ -48,11 +52,24 @@ template.innerHTML = `
         <div class="detail-row">
             <label for="${ID_INPUT_ID}">id:</label><input id="${ID_INPUT_ID}" type="text" disabled />
         </div>
+        
+        <div class="detail-row">
+            <label for="${ID_INPUT_ACTIVE}">Is Active:</label><input id="${ID_INPUT_ACTIVE}" type="text"/>
+        </div>
         <div class="detail-row">
             <label for="${ID_INPUT_FIRST_NAME}">First Name:</label><input id="${ID_INPUT_FIRST_NAME}" type="text"/>
         </div>
         <div class="detail-row">
             <label for="${ID_INPUT_LAST_NAME}">Last Name:</label><input id="${ID_INPUT_LAST_NAME}" type="text"/>
+        </div>
+        <div class="detail-row">
+            <label for="${ID_INPUT_LAST_NAME}">Role:</label>
+            <select id="${ID_INPUT_ROLE}" type="text">
+                <option disabled>--Select Role--</option>
+                <option>User</option>
+                <option>Manager</option>
+                <option>SysAdmin</option>
+            </select>
         </div>
         <div class="detail-row">
             <label for="${ID_BUTTON_SAVE}"> &nbsp; </label><button id="${ID_BUTTON_SAVE}" class="button-save" disabled>Save</button>
@@ -74,15 +91,16 @@ template.innerHTML = `
         <pre>
 const MOCK_DATA = {
     cols: [
-        { field: 'id',            name: 'id',         title: 'Record id (id)' },
-        { field: 'firstName',     name: 'First Name', title: 'First Name (firstName)' },
-        { field: 'lastName',      name: 'Last Name',  title: 'Last Name (lastName)' },
-        { field: 'custom-action', name: 'Action',     title: 'Custom rendering'}
+        {field: 'id',        name: 'id',         title: 'Record id (id)' },
+        {field: 'firstName', name: 'First Name', title: 'First Name (firstName)' },
+        {field: 'lastName',  name: 'Last Name',  title: 'Last Name (lastName)' },
+        {field: 'role',      name: 'Role',       title: 'Role' },
+        {field: 'action',    name: 'Action',     title: 'Custom rendering' }
     ],
     rows: [
-        {id: 123, firstName: 'Nikolai', lastName: 'Müller',     title: 'Mr. Nikolai Müller' },
-        {id: 234, firstName: 'Max',     lastName: 'Mustermann', title: 'Mr. Max Mustermann' },
-        {id: 345, firstName: 'Klara',   lastName: 'Beispiel',   title: 'Mrs. Klara Beispiel' },
+        {id: 123, firstName: 'Nikolai', lastName: 'Müller',     role: 'Admin',   title: 'Mr. Nikolai Müller', },
+        {id: 234, firstName: 'Max',     lastName: 'Mustermann', role: 'User',    title: 'Mr. Max Mustermann', },
+        {id: 345, firstName: 'Klara',   lastName: 'Beispiel',   role: 'Manager', title: 'Mrs. Klara Beispiel', },
     ]
 }
         </pre>
@@ -120,8 +138,10 @@ export default class TableView extends HTMLElement {
         this.refTableContainer = shadow.getElementById(ID_TABLE_CONTAINER)
         this.refDetailsContainer = shadow.getElementById(ID_DETAILS_CONTAINER)
         this.refInputId = shadow.getElementById(ID_INPUT_ID)
+        this.refInputActive = shadow.getElementById(ID_INPUT_ACTIVE)
         this.refInputFirstName = shadow.getElementById(ID_INPUT_FIRST_NAME)
         this.refInputLastName = shadow.getElementById(ID_INPUT_LAST_NAME)
+        this.refSelectRole = shadow.getElementById(ID_INPUT_ROLE)
         this.refSaveButton = shadow.getElementById(ID_BUTTON_SAVE)
         this.refAddButton = shadow.getElementById(ID_BUTTON_ADD)
 
@@ -140,6 +160,7 @@ export default class TableView extends HTMLElement {
         // Bind custom rendering functions
         this.render_custom_column = this.render_custom_column.bind(this)
         this.render_custom_cell = this.render_custom_cell.bind(this)
+        this.render_custom_role_cell = this.render_custom_role_cell.bind(this)
     }
 
     // *** Livecycle callbacks  ***
@@ -153,17 +174,20 @@ export default class TableView extends HTMLElement {
             this.fetchDataForTable()
             .then(tableData => {
                 // Extend column header(s) by custom rendering.
-                const COL_INDEX_ACTION = 3
+                const COL_INDEX_ACTION = tableData.cols.findIndex(col => col.field === 'action' )
                 tableData.cols[COL_INDEX_ACTION].customRendering = this.render_custom_column
                 // Assign columns definition
                 this.refTableWC2.setDataColumns(tableData.cols /* MOCK_DATA.cols */)
                 // Extend each data-row by custom rendering.
-                tableData.rows.forEach(row => { row.customRendering = this.render_custom_cell })
+                tableData.rows.forEach(row => { 
+                    row.role.render = this.render_custom_role_cell
+                    row.action = this.render_custom_cell 
+                })
                 // Assign data-rows, this triggers <table-wc>'s rendering.
                 this.refTableWC2.setDataRows(tableData.rows /* MOCK_DATA.rows */) 
             })
             .catch(err => {
-                console.exception(`${TableView.tag}.connectedCallback - provisioning <table-wc> failed - err:`, err)
+                console.error(`${TableView.tag}.connectedCallback - provisioning <table-wc> failed - err:`, err)
             })
             
             // Add event handler for <table-wc>'s click event.
@@ -215,16 +239,32 @@ export default class TableView extends HTMLElement {
             if (event.detail.isRowSelected === true) {
                 // Provision Detail inputs
                 this.refInputId.value = event.detail.rowData.id
+                
+                this.refInputActive.value = event.detail.rowData.active
                 this.refInputFirstName.value = event.detail.rowData.firstName
                 this.refInputLastName.value = event.detail.rowData.lastName
+
+                let role = event.detail.rowData.role.value
+                this.refSelectRole.selectedIndex = -1
+                Array.from(this.refSelectRole.options).forEach(option => {
+                    if (option.value === role) {
+                        option.setAttribute('selected', 'selected')
+                        option.selected = true
+                    }
+                })
+                
 
                 this.refSaveButton.removeAttribute('disabled')
                 this.refAddButton.setAttribute('disabled', 'disabled')
             } else {
                 // Clear Detail inputs
                 this.refInputId.value = 0
+                this.refInputActive.value = false
                 this.refInputFirstName.value = ''
                 this.refInputLastName.value = ''
+                // this.refSelectRole.selected
+                Array.from(this.refSelectRole.options).forEach(option => { option.removeAttribute('selected') })
+                this.refSelectRole.options[0].setAttribute('selected', 'selected') 
 
                 this.refSaveButton.setAttribute('disabled', 'disabled')
                 this.refAddButton.removeAttribute('disabled')
@@ -239,17 +279,25 @@ export default class TableView extends HTMLElement {
         let id = Number(this.refInputId.value)
         let dataRow = MOCK_DATA.rows.find(item => item.id === id)
         if (dataRow) {
+            dataRow.active =  this.refInputActive.value
             dataRow.firstName = this.refInputFirstName.value
             dataRow.lastName = this.refInputLastName.value
+            let selectedOptions = Array.from(this.refSelectRole.selectedOptions)
+            if (selectedOptions.length > 0) {
+                dataRow.role.value = selectedOptions[0].value
+            }
+
         }
         
-        // this.refTableWC.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
         this.refTableWC2.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
 
         // Clear Detail inputs
         this.refInputId.value = 0
+        this.refInputActive.value = false
         this.refInputFirstName.value = ''
         this.refInputLastName.value = ''
+        Array.from(this.refSelectRole.options).forEach(option => option.removeAttribute('selected'))
+        this.refSelectRole.options[0].setAttribute('selected', 'selected')
 
         this.refSaveButton.setAttribute('disabled', 'disabled')
         this.refAddButton.removeAttribute('disabled')
@@ -268,17 +316,23 @@ export default class TableView extends HTMLElement {
         lastRow = lastRow + 123
 
         // Create new row's data item
+        let role = {
+            value: 'User',
+            render: this.render_custom_role_cell
+        }
         let newRowData = {
             id: lastRow,
+            active: false,
             firstName: '',
             lastName: '',
             title: `New User [${lastRow}]`,
-            customRendering: this.render_custom_cell // Don't forget custom-rendering function.
+            // Don't forget custom-rendering function.
+            role: role,
+            action: this.render_custom_cell
         }
 
         // Add new row's data item to mock-data
         MOCK_DATA.rows.push(newRowData)
-        // this.refTableWC.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
         this.refTableWC2.setDataRows(MOCK_DATA.rows) // This triggers <table-wc>'s rendering
 
         this.refSaveButton.setAttribute('disabled', 'disabled')
@@ -289,7 +343,7 @@ export default class TableView extends HTMLElement {
 
     render_custom_column(columnData, refRow, refCol) {
         // custom column render funktion: (columnData, refRow, refCol) => {;}
-        console.log(`${TableView.tag}.render_custom_action(): columnData:`, columnData)
+        console.log(`${TableView.tag}.render_custom_column(): columnData:`, columnData)
 
         let refCustomButton = document.createElement('button')
         refCustomButton.textContent = 'Custom Column Action'
@@ -306,7 +360,7 @@ export default class TableView extends HTMLElement {
     }
 
     render_custom_cell(rowData, cellData, refRow, refCol) {
-        console.log(`${TableView.tag}.render_custom_action(): rowData:`, rowData)
+        console.log(`${TableView.tag}.render_custom_cell(): rowData:`, rowData)
 
         let refCustomButton = document.createElement('button')
         refCustomButton.textContent = 'Custom Cell Action'
@@ -319,6 +373,35 @@ export default class TableView extends HTMLElement {
             alert(`"Custom Cell Action" button clicked!\n\nrowData: ${JSON.stringify(rowData||null)}\n\nthis:\t${this}\nthis.localName:\t<${this.localName}>`); 
         })
         refCol.appendChild(refCustomButton)
+    }
+
+    render_custom_role_cell(rowData, cellData, refRow, refCol) {
+        console.log(`${TableView.tag}.render_custom_role_cell(): rowData:`, rowData)
+
+        let refCustomSelect = document.createElement('select')
+
+        let refOption1 = document.createElement('option')
+        refOption1.textContent = 'User'
+        if (rowData.role.value === 'User') { refOption1.setAttribute('selected', 'selected') }
+        refCustomSelect.appendChild(refOption1)
+        
+        let refOption2 = document.createElement('option')
+        refOption2.textContent = 'Manager'
+        if (rowData.role.value === 'Manager') { refOption2.setAttribute('selected', 'selected') }
+        refCustomSelect.appendChild(refOption2)
+        
+        let refOption3 = document.createElement('option')
+        refOption3.textContent = 'SysAdmin'
+        if (rowData.role.value === 'SysAdmin') { refOption3.setAttribute('selected', 'selected') }
+        refCustomSelect.appendChild(refOption3)
+
+
+        refCustomSelect.addEventListener('change', () => {
+            // rowData.role.value = 
+            alert(`"Custom Role Cell" select change!\n\nrowData: ${JSON.stringify(rowData||null)}\n\nthis:\t${this}\nthis.localName:\t<${this.localName}>`); 
+        })
+
+        refCol.appendChild(refCustomSelect)
     }
 }
 // Register custom element.
