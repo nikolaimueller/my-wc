@@ -1,6 +1,6 @@
 {
   "name": "my-wc",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Native HTML5 web-components",
   "main": "index.js",
   "scripts": {
